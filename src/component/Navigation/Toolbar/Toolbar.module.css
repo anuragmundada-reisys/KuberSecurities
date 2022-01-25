@@ -1,0 +1,36 @@
+.Toolbar {
+    height: 56px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 90;
+}
+
+.Toolbar nav {
+    height: 100%
+}
+
+.Menu {
+    height: 40%;
+    margin-top: 15px;
+    Color: #5e1d8a;
+    font-weight: 600;
+
+}
+
+.LogoAndMenu{
+  display: inline-flex;
+}
+
+@media(max-width:499px){
+    .smallScreenOnly{
+        display: flex;
+        flex-direction: column;
+        
+    }
+}
