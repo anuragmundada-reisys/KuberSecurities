@@ -1,0 +1,37 @@
+.Input {
+    width: 80%;
+    box-sizing: border-box;
+    padding: 6px 10px;
+    margin: 5px 50px
+}
+
+.Label {
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #5e1d8a;
+}
+
+.InputElement {
+    border: 1px solid #5a4c63;
+    background-color: white;
+    padding: 6px 10px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px #e7caca;
+}
+
+.InputElement :focus {
+    border: 1px solid #5e1d8a;
+    background-color: #eee;
+}
+
+.SelectOption{
+    color: black;
+}
+
+select:invalid{
+    color: grey;
+}
