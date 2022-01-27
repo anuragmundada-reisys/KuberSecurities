@@ -9,8 +9,7 @@ class Layout extends Component {
             <>
             <Toolbar/> 
              <main className = {classes.content}>
-               {/*  {this.props.children} */}
-               <p>Work in Progress!!!</p>
+                {this.props.children}
             </main>
             </>
           )
