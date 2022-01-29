@@ -42,6 +42,18 @@ class ConnectedRawMaterialPurchase extends Component {
                 value: '',
                 label: 'Quantity'
             },
+            status: {
+                elementType: 'select',
+                elementConfig: {
+                  options: [
+                      {id: true, displayValue: 'Success'},
+                      {id: false, displayValue: 'Pending'}
+                  ],
+                  placeholder: 'Select Status'
+                },
+                value: '',
+                label: 'Status',
+            },
             purchaseDate: {
                 elementType: 'datePicker',
                 elementConfig: {
@@ -55,6 +67,7 @@ class ConnectedRawMaterialPurchase extends Component {
     }
 
   async componentDidMount(){
+      
        await this.props.getMasterData()
         const rawMaterialOptions = [];
         const productTypeOptions =[];
@@ -73,7 +86,6 @@ class ConnectedRawMaterialPurchase extends Component {
         })
         
         let updatedRawMaterialPurchaseForm = {...this.state.rawMaterialPurchaseForm}
-        console.log(rawMaterialOptions)
         let updatedRawMaterialElement = { ...updatedRawMaterialPurchaseForm.rawMaterial}
         updatedRawMaterialElement.elementConfig.options = rawMaterialOptions;
         updatedRawMaterialPurchaseForm.rawMaterial = updatedRawMaterialElement;
@@ -97,10 +109,10 @@ class ConnectedRawMaterialPurchase extends Component {
                 formData[key] = this.state.rawMaterialPurchaseForm[key].value
             }
         }
-        console.log(formData);
         this.props.addRawMaterialPurchase(formData);
         //call middleware function to post data and update state in store        
         alert('form submitted!')
+        this.props.navigate('/raw-material/purchase', {replace:true});
     }
 
     inputChangeHandler = (event, keyIdentifier) => {
@@ -115,8 +127,8 @@ class ConnectedRawMaterialPurchase extends Component {
         this.setState({rawMaterialPurchaseForm: updatedRawMaterialPurchaseForm})
     }
 
-
     cancelHandler = () => {
+        this.props.navigate('/raw-material/purchase', {replace:true});
         alert('Cancel!!')
     }
 
@@ -140,7 +152,7 @@ class ConnectedRawMaterialPurchase extends Component {
                          changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
                     ) )}
                     <Button btnType='Success' clicked={this.purchaseHandler}> ADD </Button>
-                    <Button btnType='Danger' clicked={this.purchaseHandler}> CANCEL </Button>
+                    <Button btnType='Danger' clicked={this.cancelHandler}> CANCEL </Button>
                 </form>
             </div>
         )

@@ -3,7 +3,7 @@ import NavigationItem from '../NavigationItem/NavigationItem';
 import classes from './NavigationItems.module.css';
 const navigationItems = () => (
     <ul className={classes.NaviagtionItems}>
-        <NavigationItem link='/purchase' exact >PURCHASE</NavigationItem>
+        <NavigationItem link='/raw-material/purchase' exact >PURCHASE</NavigationItem>
         <NavigationItem link='/inventory' exact>INVENTORY</NavigationItem>
         <NavigationItem link='/orders' exact>ORDERS</NavigationItem>
     </ul>
