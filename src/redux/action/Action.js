@@ -1,8 +1,16 @@
-import { ADD_RAW_MATERIAL_PURCHASE, GET_MASTER_DATA , GET_RAW_MATERIAL_PURCHASE} from '../constant/ActionType';
+import {  GET_MASTER_DATA , GET_RAW_MATERIAL_PURCHASE} from '../constant/ActionType';
+import axios from '../../axios';
 
 export function addRawMaterialPurchase(payload) {
     //add post call to API
-    return { type: ADD_RAW_MATERIAL_PURCHASE, payload }
+    return function(dispatch){
+      axios.post('/kuberbeverages/rawmaterials/v1', payload).then(res=>{
+        console.log('success', res)
+      }).catch(err=>{
+        console.log("error", err)
+      })
+    }
+    // return { type: ADD_RAW_MATERIAL_PURCHASE, payload }
   };
 
 export function getMasterData(){

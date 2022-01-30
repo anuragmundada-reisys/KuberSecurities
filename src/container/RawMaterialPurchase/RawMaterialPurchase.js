@@ -15,7 +15,7 @@ function mapDispatchToProps(dispatch) {
 class ConnectedRawMaterialPurchase extends Component {
     state ={
         rawMaterialPurchaseForm : {
-            rawMaterial: {
+            rawMaterialId: {
                 elementType: 'select',
                 elementConfig: {
                   options: [],
@@ -24,7 +24,7 @@ class ConnectedRawMaterialPurchase extends Component {
                 value: '',
                 label: 'Raw Material'
             },
-            productType: {
+            productId: {
                 elementType: 'select',
                 elementConfig: {
                   options: [],
@@ -86,13 +86,13 @@ class ConnectedRawMaterialPurchase extends Component {
         })
         
         let updatedRawMaterialPurchaseForm = {...this.state.rawMaterialPurchaseForm}
-        let updatedRawMaterialElement = { ...updatedRawMaterialPurchaseForm.rawMaterial}
+        let updatedRawMaterialElement = { ...updatedRawMaterialPurchaseForm.rawMaterialId}
         updatedRawMaterialElement.elementConfig.options = rawMaterialOptions;
-        updatedRawMaterialPurchaseForm.rawMaterial = updatedRawMaterialElement;
+        updatedRawMaterialPurchaseForm.rawMaterialId = updatedRawMaterialElement;
 
-        let updatedProductTypeElement = { ...updatedRawMaterialPurchaseForm.productType}
+        let updatedProductTypeElement = { ...updatedRawMaterialPurchaseForm.productId}
          updatedProductTypeElement.elementConfig.options = productTypeOptions;
-         updatedRawMaterialPurchaseForm.productType = updatedProductTypeElement; 
+         updatedRawMaterialPurchaseForm.productId = updatedProductTypeElement; 
 
         this.setState({rawMaterialPurchaseForm: updatedRawMaterialPurchaseForm })
     }
@@ -100,15 +100,26 @@ class ConnectedRawMaterialPurchase extends Component {
 
     purchaseHandler = (event) => {
         event.preventDefault();
+
+        const integerConvertibleKeys = ['rawMaterialId', 'productId', 'quantity'];
+
          const formData = {};
         for(let key in this.state.rawMaterialPurchaseForm){
             if(key === 'purchaseDate'){
-                let date =  this.state.rawMaterialPurchaseForm[key].value;
-                formData[key] = new Date(date).toLocaleDateString();
+               /*  let date =  this.state.rawMaterialPurchaseForm[key].value;
+                let stringifiedDate = new Date(date).toLocaleDateString();
+                formData[key] = moment(stringifiedDate).format('mm/dd/yyyy'); */
+                formData[key] = this.state.rawMaterialPurchaseForm[key].value;
+            }else if(integerConvertibleKeys.includes(key)){
+                formData[key] = parseInt(this.state.rawMaterialPurchaseForm[key].value)
+            }else if(key === 'status'){
+                formData[key] = JSON.parse(this.state.rawMaterialPurchaseForm[key].value)
             }else{
                 formData[key] = this.state.rawMaterialPurchaseForm[key].value
             }
+           
         }
+        console.log(formData)
         this.props.addRawMaterialPurchase(formData);
         //call middleware function to post data and update state in store        
         alert('form submitted!')
