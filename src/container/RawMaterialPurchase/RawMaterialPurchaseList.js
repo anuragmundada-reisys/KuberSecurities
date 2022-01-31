@@ -1,6 +1,6 @@
 import React, {Component } from 'react';
 import { connect } from 'react-redux';
-import { getRawMaterialPurchase } from '../../redux/action/Action';
+import { getRawMaterialPurchase } from '../../redux/action/RawMaterialAction';
 import Table from '../../component/UI/Table/Table';
 import Button from '../../component/UI/Button/Button';
 import classes from './RawMaterialPurchaseList.module.css';

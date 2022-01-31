@@ -1,29 +1,29 @@
 import React, {Component} from 'react';
 import Button from '../../component/UI/Button/Button';
 import Input from '../../component/UI/FormElement/FormElement';
-import classes from './RawMaterialPurchase.module.css';
-import { addRawMaterialPurchase } from '../../redux/action/RawMaterialAction';
+import classes from './Order.module.css';
+import { addOrder } from '../../redux/action/OrderAction';
 import { getMasterData } from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
 
 function mapDispatchToProps(dispatch) {
     return {
-        addRawMaterialPurchase: rawMaterial => dispatch(addRawMaterialPurchase(rawMaterial)),
+        addOrder: order => dispatch(addOrder(order)),
         getMasterData: ()=> dispatch(getMasterData())
     };
 }
 
-class ConnectedRawMaterialPurchase extends Component {
+class ConnectedOrder extends Component {
     state ={
-        rawMaterialPurchaseForm : {
-            rawMaterialId: {
-                elementType: 'select',
+        orderForm : {
+            customerName: {
+                elementType: 'input',
                 elementConfig: {
-                  options: [],
-                  placeholder: 'Select Raw Material',
+                  type: 'text',
+                  placeholder: 'Enter Customer Name',
                 },
                 value: '',
-                label: 'Raw Material'
+                label: 'Customer Name'
             },
             productId: {
                 elementType: 'select',
@@ -38,7 +38,7 @@ class ConnectedRawMaterialPurchase extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'number',
-                    placeHolder: 'Enter Purchased Quantity'
+                    placeHolder: 'Enter Ordered Quantity'
                 },
                 value: '',
                 label: 'Quantity'
@@ -55,29 +55,22 @@ class ConnectedRawMaterialPurchase extends Component {
                 value: '',
                 label: 'Status',
             },
-            purchaseDate: {
+            orderDate: {
                 elementType: 'datePicker',
                 elementConfig: {
                     name: 'startDate',
-                    placeholder: 'Select Purchased Date',
+                    placeholder: 'Select Ordered Date',
                 },
                 value: '',
-                label: 'Purchase Date'
+                label: 'Order Date'
             },
         },
     }
 
   async componentDidMount(){
       
-       await this.props.getMasterData()
-        const rawMaterialOptions = [];
+       await this.props.getMasterData();
         const productTypeOptions =[];
-        this.props.masterData.rawMaterialType.map(rawMaterial => {
-           return rawMaterialOptions.push({
-                id: rawMaterial.key,
-                displayValue: rawMaterial.value
-            })
-        })
 
         this.props.masterData.productType.map(product => {
             return productTypeOptions.push({
@@ -86,68 +79,66 @@ class ConnectedRawMaterialPurchase extends Component {
           })
         })
         
-        let updatedRawMaterialPurchaseForm = {...this.state.rawMaterialPurchaseForm}
-        let updatedRawMaterialElement = { ...updatedRawMaterialPurchaseForm.rawMaterialId}
-        updatedRawMaterialElement.elementConfig.options = rawMaterialOptions;
-        updatedRawMaterialPurchaseForm.rawMaterialId = updatedRawMaterialElement;
+        let updatedOrderForm = {...this.state.orderForm}
+     
 
-        let updatedProductTypeElement = { ...updatedRawMaterialPurchaseForm.productId}
+        let updatedProductTypeElement = { ...updatedOrderForm.productId}
          updatedProductTypeElement.elementConfig.options = productTypeOptions;
-         updatedRawMaterialPurchaseForm.productId = updatedProductTypeElement; 
+         updatedOrderForm.productId = updatedProductTypeElement; 
 
-        this.setState({rawMaterialPurchaseForm: updatedRawMaterialPurchaseForm })
+        this.setState({orderForm: updatedOrderForm })
     }
 
 
-    purchaseHandler = (event) => {
+    addOrderHandler = (event) => {
         event.preventDefault();
 
-        const integerConvertibleKeys = ['rawMaterialId', 'productId', 'quantity'];
+        const integerConvertibleKeys = ['productId', 'quantity'];
 
          const formData = {};
-        for(let key in this.state.rawMaterialPurchaseForm){
+        for(let key in this.state.orderForm){
             if(integerConvertibleKeys.includes(key)){
-                formData[key] = parseInt(this.state.rawMaterialPurchaseForm[key].value)
+                formData[key] = parseInt(this.state.orderForm[key].value)
             }else if(key === 'status'){
-                formData[key] = JSON.parse(this.state.rawMaterialPurchaseForm[key].value)
+                formData[key] = JSON.parse(this.state.orderForm[key].value)
             }else{
-                formData[key] = this.state.rawMaterialPurchaseForm[key].value
+                formData[key] = this.state.orderForm[key].value
             }
            
         }
-        this.props.addRawMaterialPurchase(formData);
+        this.props.addOrder(formData);
         alert('form submitted!')
-        this.props.navigate('/raw-material/purchase', {replace:true});
+        this.props.navigate('/order', {replace:true});
     }
 
     inputChangeHandler = (event, keyIdentifier) => {
-        const updatedRawMaterialPurchaseForm = {...this.state.rawMaterialPurchaseForm}
-        const updatedElement = { ...updatedRawMaterialPurchaseForm[keyIdentifier]}
-        if(keyIdentifier === 'purchaseDate'){
+        const updatedOrderForm = {...this.state.orderForm}
+        const updatedElement = { ...updatedOrderForm[keyIdentifier]}
+        if(keyIdentifier === 'orderDate'){
              updatedElement.value = event;
         }else{
             updatedElement.value = event.target.value;
         }
-        updatedRawMaterialPurchaseForm[keyIdentifier] = updatedElement;
-        this.setState({rawMaterialPurchaseForm: updatedRawMaterialPurchaseForm})
+        updatedOrderForm[keyIdentifier] = updatedElement;
+        this.setState({orderForm: updatedOrderForm})
     }
 
     cancelHandler = () => {
-        this.props.navigate('/raw-material/purchase', {replace:true});
+        this.props.navigate('/order', {replace:true});
         alert('Cancel!!')
     }
 
     render() {
         const formElementArray = [];
-        for(let key in this.state.rawMaterialPurchaseForm){
+        for(let key in this.state.orderForm){
             formElementArray.push({
                 id: key,
-                config: this.state.rawMaterialPurchaseForm[key]
+                config: this.state.orderForm[key]
             })
         }
         return(
-            <div className={classes.RawMaterialPurchase}>
-                <h4 className={classes.Title}>Enter Purchase Details</h4>
+            <div className={classes.Order}>
+                <h4 className={classes.Title}>Enter Order Details</h4>
                 <form>
                     {formElementArray.map(formElement => (
                         <Input elementType={formElement.config.elementType}
@@ -156,7 +147,7 @@ class ConnectedRawMaterialPurchase extends Component {
                          label={formElement.config.label}
                          changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
                     ) )}
-                    <Button btnType='Success' clicked={this.purchaseHandler}> ADD </Button>
+                    <Button btnType='Success' clicked={this.addOrderHandler}> ADD </Button>
                     <Button btnType='Danger' clicked={this.cancelHandler}> CANCEL </Button>
                 </form>
             </div>
@@ -170,9 +161,9 @@ function mapStateToProps(state) {
     };
   }
 
-const RawMaterialPurchase = connect(
+const Order = connect(
     mapStateToProps,
   mapDispatchToProps
-)(ConnectedRawMaterialPurchase)
+)(ConnectedOrder)
 
-export default RawMaterialPurchase;
+export default Order;

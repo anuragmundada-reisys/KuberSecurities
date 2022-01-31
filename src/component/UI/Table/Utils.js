@@ -35,3 +35,36 @@ export const RAW_MATERIAL_COLUMNS =  [
      filter: 'includes',
    },
 ]
+
+
+export const ORDER_LIST_COLUMNS =  [
+  {
+     Header: "Customer Name",
+     accessor: "customerName",
+     Filter: SelectColumnFilter, 
+     filter: 'includes',
+   },
+   {
+     Header: "Product Type",
+     accessor: "productType",
+     Filter: SelectColumnFilter, 
+     filter: 'includes',
+   },
+   {
+     Header: "Quantity",
+     accessor: "quantity",
+   },
+   {
+     Header: "Status",
+     accessor: "status",
+     Cell: ({ row: { original } }) => {
+         return original.status === true ? 'Success' : 'Pending';
+     },
+   },
+   {
+     Header: "Order Date",
+     accessor: "orderDate",
+     Filter: SelectColumnFilter, 
+     filter: 'includes',
+   },
+]

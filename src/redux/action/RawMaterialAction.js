@@ -1,4 +1,4 @@
-import {  GET_MASTER_DATA , GET_RAW_MATERIAL_PURCHASE, ADD_RAW_MATERIAL_PURCHASE} from '../constant/ActionType';
+import { GET_RAW_MATERIAL_PURCHASE, ADD_RAW_MATERIAL_PURCHASE} from '../constant/ActionType';
 import axios from '../../axios';
 
 export function addRawMaterialPurchase(payload) {
@@ -11,15 +11,6 @@ export function addRawMaterialPurchase(payload) {
     }
   };
 
-export function getMasterData(){
-    return function(dispatch) {
-        return axios.get('/kuberbeverages/dictionary/v1').then(response=>{
-            dispatch({ type: GET_MASTER_DATA, payload: response.data });
-        }).catch(err=>{
-            console.log("error", err)
-        })
-      };
-}
 
 export function getRawMaterialPurchase(){
     return function(dispatch) {

@@ -1,4 +1,4 @@
-.RawMaterialPurchase {
+.Order {
     margin: 130px auto;
     width: 50%;
     text-align: center;
@@ -12,7 +12,7 @@
 
 .Title {
     color: #5e1d8a;
-    margin-top: 7px
+    margin-top: 7px;
 }
 
 .Input {
@@ -20,7 +20,7 @@
 }
 
 @media (max-width: 600px) {
-    .RawMaterialPurchase{
+    .Order{
         width: 400px
     }
 }
