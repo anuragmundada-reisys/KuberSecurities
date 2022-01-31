@@ -68,3 +68,22 @@ export const ORDER_LIST_COLUMNS =  [
      filter: 'includes',
    },
 ]
+
+export const INVENTORY_LIST_COLUMNS =  [
+   {
+     Header: "Product Type",
+     accessor: "productType",
+     Filter: SelectColumnFilter, 
+     filter: 'includes',
+   },
+   {
+     Header: "Quantity",
+     accessor: "quantity",
+   },
+   {
+     Header: "Production Date",
+     accessor: "productionDate",
+     Filter: SelectColumnFilter, 
+     filter: 'includes',
+   },
+]

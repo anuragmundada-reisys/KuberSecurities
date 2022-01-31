@@ -1,4 +1,9 @@
-import { ADD_RAW_MATERIAL_PURCHASE, GET_MASTER_DATA, GET_RAW_MATERIAL_PURCHASE, GET_ALL_ORDERS, ADD_ORDER } from '../constant/ActionType';
+import { ADD_RAW_MATERIAL_PURCHASE, 
+    GET_MASTER_DATA, 
+    GET_RAW_MATERIAL_PURCHASE, 
+    GET_ALL_ORDERS, ADD_ORDER, 
+    GET_INVENTORY_DATA, 
+    ADD_INVENTORY } from '../constant/ActionType';
 
 const initialState = {
     masterData: {
@@ -8,7 +13,9 @@ const initialState = {
     rawMaterialPurchase: {},
     rawMaterialPurchaseList: [],
     orderList: [],
-    order:{}
+    order:{},
+    inventoryData: [],
+    inventory:{}
   };
   
   function rootReducer(state = initialState, action) {
@@ -33,6 +40,14 @@ const initialState = {
                 return {
                     ...state, order: action.payload
                 }
+            case GET_INVENTORY_DATA:
+                return {
+                   ...state, inventoryData: action.payload
+                 }
+            case ADD_INVENTORY:
+                 return {
+                    ...state, inventory: action.payload
+                 }
           default:
               return state;
      }
