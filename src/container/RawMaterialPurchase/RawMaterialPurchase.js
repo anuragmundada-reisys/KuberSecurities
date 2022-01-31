@@ -73,15 +73,15 @@ class ConnectedRawMaterialPurchase extends Component {
         const productTypeOptions =[];
         this.props.masterData.rawMaterialType.map(rawMaterial => {
            return rawMaterialOptions.push({
-                id: rawMaterial.Raw_Material_Id,
-                displayValue: rawMaterial.Raw_Material_Name
+                id: rawMaterial.key,
+                displayValue: rawMaterial.value
             })
         })
 
         this.props.masterData.productType.map(product => {
             return productTypeOptions.push({
-                 id: product.Product_Id,
-                 displayValue: product.Product_Type
+                 id: product.key,
+                 displayValue: product.value
           })
         })
         
@@ -106,9 +106,6 @@ class ConnectedRawMaterialPurchase extends Component {
          const formData = {};
         for(let key in this.state.rawMaterialPurchaseForm){
             if(key === 'purchaseDate'){
-               /*  let date =  this.state.rawMaterialPurchaseForm[key].value;
-                let stringifiedDate = new Date(date).toLocaleDateString();
-                formData[key] = moment(stringifiedDate).format('mm/dd/yyyy'); */
                 formData[key] = this.state.rawMaterialPurchaseForm[key].value;
             }else if(integerConvertibleKeys.includes(key)){
                 formData[key] = parseInt(this.state.rawMaterialPurchaseForm[key].value)
@@ -119,9 +116,7 @@ class ConnectedRawMaterialPurchase extends Component {
             }
            
         }
-        console.log(formData)
         this.props.addRawMaterialPurchase(formData);
-        //call middleware function to post data and update state in store        
         alert('form submitted!')
         this.props.navigate('/raw-material/purchase', {replace:true});
     }

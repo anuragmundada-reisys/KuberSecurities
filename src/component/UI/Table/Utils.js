@@ -7,27 +7,30 @@ export function classNames(...classes) {
 export const RAW_MATERIAL_COLUMNS =  [
   {
      Header: "Raw Material",
-     accessor: "RawMaterial_Type",
+     accessor: "rawMaterialName",
      Filter: SelectColumnFilter, 
      filter: 'includes',
    },
    {
      Header: "Product Type",
-     accessor: "Product_Type",
+     accessor: "productType",
      Filter: SelectColumnFilter, 
      filter: 'includes',
    },
    {
      Header: "Quantity",
-     accessor: "Quantity",
+     accessor: "quantity",
    },
    {
      Header: "Status",
-     accessor: "Status",
+     accessor: "status",
+     Cell: ({ row: { original } }) => {
+         return original.status === true ? 'Success' : 'Pending';
+     },
    },
    {
      Header: "Purchase Date",
-     accessor: "Date",
+     accessor: "purchaseDate",
      Filter: SelectColumnFilter, 
      filter: 'includes',
    },
