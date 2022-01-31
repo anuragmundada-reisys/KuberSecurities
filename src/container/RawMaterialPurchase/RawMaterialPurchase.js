@@ -15,7 +15,7 @@ function mapDispatchToProps(dispatch) {
 class ConnectedRawMaterialPurchase extends Component {
     state ={
         rawMaterialPurchaseForm : {
-            rawMaterial: {
+            rawMaterialId: {
                 elementType: 'select',
                 elementConfig: {
                   options: [],
@@ -24,7 +24,7 @@ class ConnectedRawMaterialPurchase extends Component {
                 value: '',
                 label: 'Raw Material'
             },
-            productType: {
+            productId: {
                 elementType: 'select',
                 elementConfig: {
                   options: [],
@@ -73,26 +73,26 @@ class ConnectedRawMaterialPurchase extends Component {
         const productTypeOptions =[];
         this.props.masterData.rawMaterialType.map(rawMaterial => {
            return rawMaterialOptions.push({
-                id: rawMaterial.Raw_Material_Id,
-                displayValue: rawMaterial.Raw_Material_Name
+                id: rawMaterial.key,
+                displayValue: rawMaterial.value
             })
         })
 
         this.props.masterData.productType.map(product => {
             return productTypeOptions.push({
-                 id: product.Product_Id,
-                 displayValue: product.Product_Type
+                 id: product.key,
+                 displayValue: product.value
           })
         })
         
         let updatedRawMaterialPurchaseForm = {...this.state.rawMaterialPurchaseForm}
-        let updatedRawMaterialElement = { ...updatedRawMaterialPurchaseForm.rawMaterial}
+        let updatedRawMaterialElement = { ...updatedRawMaterialPurchaseForm.rawMaterialId}
         updatedRawMaterialElement.elementConfig.options = rawMaterialOptions;
-        updatedRawMaterialPurchaseForm.rawMaterial = updatedRawMaterialElement;
+        updatedRawMaterialPurchaseForm.rawMaterialId = updatedRawMaterialElement;
 
-        let updatedProductTypeElement = { ...updatedRawMaterialPurchaseForm.productType}
+        let updatedProductTypeElement = { ...updatedRawMaterialPurchaseForm.productId}
          updatedProductTypeElement.elementConfig.options = productTypeOptions;
-         updatedRawMaterialPurchaseForm.productType = updatedProductTypeElement; 
+         updatedRawMaterialPurchaseForm.productId = updatedProductTypeElement; 
 
         this.setState({rawMaterialPurchaseForm: updatedRawMaterialPurchaseForm })
     }
@@ -100,17 +100,23 @@ class ConnectedRawMaterialPurchase extends Component {
 
     purchaseHandler = (event) => {
         event.preventDefault();
+
+        const integerConvertibleKeys = ['rawMaterialId', 'productId', 'quantity'];
+
          const formData = {};
         for(let key in this.state.rawMaterialPurchaseForm){
             if(key === 'purchaseDate'){
-                let date =  this.state.rawMaterialPurchaseForm[key].value;
-                formData[key] = new Date(date).toLocaleDateString();
+                formData[key] = this.state.rawMaterialPurchaseForm[key].value;
+            }else if(integerConvertibleKeys.includes(key)){
+                formData[key] = parseInt(this.state.rawMaterialPurchaseForm[key].value)
+            }else if(key === 'status'){
+                formData[key] = JSON.parse(this.state.rawMaterialPurchaseForm[key].value)
             }else{
                 formData[key] = this.state.rawMaterialPurchaseForm[key].value
             }
+           
         }
         this.props.addRawMaterialPurchase(formData);
-        //call middleware function to post data and update state in store        
         alert('form submitted!')
         this.props.navigate('/raw-material/purchase', {replace:true});
     }
