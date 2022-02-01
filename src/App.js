@@ -7,6 +7,7 @@ import OrderList from './container/Order/OrderList';
 import Order from './container/Order/Order';
 import InventoryList from './container/Inventory/InventoryList';
 import Inventory from './container/Inventory/Inventory';
+import Home from './container/Home/Home';
 
 function App() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ function App() {
     <div className="App">
       <Layout>
          <Routes>
+           <Route path='/' exact element={<Home/>}/>
             <Route path="/raw-material/purchase"  exact element={<RawMaterialPurchaseList navigate={navigate} location={location}/>}/>
             <Route path='/raw-material/add' exact element={<RawMaterialPurchase navigate={navigate}/>}/>
             <Route path="/order" exact element={<OrderList navigate={navigate}/>}/>

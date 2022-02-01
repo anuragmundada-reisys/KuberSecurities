@@ -3,7 +3,8 @@ import { ADD_RAW_MATERIAL_PURCHASE,
     GET_RAW_MATERIAL_PURCHASE, 
     GET_ALL_ORDERS, ADD_ORDER, 
     GET_INVENTORY_DATA, 
-    ADD_INVENTORY } from '../constant/ActionType';
+    ADD_INVENTORY,
+    GET_COUNT } from '../constant/ActionType';
 
 const initialState = {
     masterData: {
@@ -15,7 +16,8 @@ const initialState = {
     orderList: [],
     order:{},
     inventoryData: [],
-    inventory:{}
+    inventory:{},
+    count: [],
   };
   
   function rootReducer(state = initialState, action) {
@@ -47,6 +49,10 @@ const initialState = {
             case ADD_INVENTORY:
                  return {
                     ...state, inventory: action.payload
+                 }
+            case GET_COUNT:
+                  return {
+                       ...state, count: action.payload
                  }
           default:
               return state;
