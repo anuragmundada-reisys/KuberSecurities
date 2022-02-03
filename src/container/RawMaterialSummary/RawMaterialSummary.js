@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-
+import classes from './RawMaterialSummary.module.css';
 class ConnectedRawMaterialSummary extends Component {
 
     state = {
@@ -12,31 +12,35 @@ class ConnectedRawMaterialSummary extends Component {
 
         this.props.count.map(el=>{
             if(el.title === this.props.type){
-                updatedRawMaterialSummary = el.rawMaterial
+                updatedRawMaterialSummary = el.availableRawMaterial
             }
         })
         this.setState({rawMaterialSummary: updatedRawMaterialSummary})
     }
 
     render(){
-        /* const rawMaterialSummary = {
-            cartoon: 100,
-            cap: 200,
-            tape: 60,
-            preform: 400
-        }; */
+      
         const rawMaterials = Object.keys(this.state.rawMaterialSummary)
         .map(igkey => {
-            return <li><span style={{textTransform: 'capitalize'}}>{igkey}: {this.state.rawMaterialSummary[igkey]}</span></li>
+
+            return (
+                <tr>
+                    <td style={{textTransform: 'capitalize' }}>{igkey}</td>
+                    <td> {this.state.rawMaterialSummary[igkey]} </td>
+                </tr>
+            ) 
         })
 
         return(
             <>
-            <h3><strong> {this.props.type} Raw Material Summary:</strong></h3>
-            <ul>
-                {rawMaterials}
-            </ul>
-            {/* <Button btnType='Danger' clicked={this.props.purchaseCancel}>cancel</Button> */}
+            <h3 style={{color:'#5e1d8a'}}><strong> {this.props.type} Raw Material Summary:</strong></h3>
+            <table>
+              <tr>
+                <th> Raw Material</th>
+                <th> Quantity</th>
+              </tr>
+              {rawMaterials}
+            </table>
            </>
         )
     }

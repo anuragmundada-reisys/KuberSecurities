@@ -10,10 +10,10 @@ export function getOrderRawMaterialCount(){
         }) */
 
         const count = [{
-            order: 1000,
-            inventory: 2000,
+            pendingOrder: 1000,
+            availableStock: 2000,
             title: '250ml',
-            rawMaterial: {
+            availableRawMaterial: {
               cartoon: 100,
               cap: 200,
               label: 100,
@@ -22,10 +22,10 @@ export function getOrderRawMaterialCount(){
             }
           },
           {
-            order: 50,
-            inventory: 100,
+            pendingOrder: 50,
+            availableStock: 100,
             title: '500ml',
-            rawMaterial: {
+            availableRawMaterial: {
               cartoon: 100,
               cap: 200,
               label: 100,
@@ -34,10 +34,10 @@ export function getOrderRawMaterialCount(){
             }
           },
           {
-            order: 90,
-            inventory: 1450,
+            pendingOrder: 90,
+            availableStock: 1450,
             title: '1L',
-            rawMaterial: {
+            availableRawMaterial: {
               cartoon: 100,
               cap: 200,
               label: 100,
@@ -46,10 +46,10 @@ export function getOrderRawMaterialCount(){
             }
           },
           {
-            order: 80,
-            inventory: 160,
+            pendingOrder: 80,
+            availableStock: 160,
             title: '2L',
-            rawMaterial: {
+            availableRawMaterial: {
               cartoon: 100,
               cap: 200,
               label: 100,

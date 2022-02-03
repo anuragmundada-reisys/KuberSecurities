@@ -21,7 +21,7 @@ class ConnectedHome extends Component{
       title: ''
     }
 
-    componentDidMount(){
+   componentDidMount(){
       this.props.getOrderRawMaterialCount()
     }
 
@@ -45,12 +45,12 @@ class ConnectedHome extends Component{
       let modifiedData = cloneDeep(DATA);
       let modifiedOptions = cloneDeep(OPTIONS)
       modifiedData.datasets[0].data.length = []; // Clear array before inserting new counts
-      modifiedData.datasets[0].data.push(this.props.count[key].order, this.props.count[key].inventory)
+      modifiedData.datasets[0].data.push(this.props.count[key].pendingOrder, this.props.count[key].availableStock)
       modifiedOptions.plugins.title.text = this.props.count[key].title;
       updatedData.push({
         data: modifiedData,
         options: modifiedOptions,
-        rawMaterials: this.props.count[key].rawMaterials,
+        rawMaterials: this.props.count[key].availableRawMaterial,
         title: this.props.count[key].title
       })
       }
@@ -70,7 +70,6 @@ class ConnectedHome extends Component{
           }
            </>
         ))}
-
         </div>
       )
     }

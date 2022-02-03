@@ -1,5 +1,5 @@
 export const DATA = {
-    labels: ['Orders','Inventory'],
+    labels: ['Pending Orders','Available Stock'],
     datasets: [
         {
             label: 'Orders for 1L cases and available Raw Material',
