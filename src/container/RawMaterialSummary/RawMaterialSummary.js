@@ -11,7 +11,7 @@ class ConnectedRawMaterialSummary extends Component {
         let updatedRawMaterialSummary = [];
 
         this.props.count.map(el=>{
-            console.log("eel", el)
+            console.log("eel", el.availableRawMaterial)
             if(el.title === this.props.type){
                 updatedRawMaterialSummary = el.availableRawMaterial
             }
@@ -21,13 +21,12 @@ class ConnectedRawMaterialSummary extends Component {
 
     render(){
       
-        const rawMaterials = Object.keys(this.state.rawMaterialSummary)
-        .map(igkey => {
-
+        const rawMaterials = this.state.rawMaterialSummary
+        .map(item => {
             return (
                 <tr>
-                    <td style={{textTransform: 'capitalize' }}>{igkey.name}</td>
-                    <td> {igkey.count} </td>
+                    <td style={{textTransform: 'capitalize' }}>{item.name}</td>
+                    <td> {item.count} </td>
                 </tr>
             ) 
         })
