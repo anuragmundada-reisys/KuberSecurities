@@ -5,3 +5,4 @@ export const ADD_ORDER = "ADD_ORDER";
 export const GET_ALL_ORDERS = "GET_ALL_ORDERS";
 export const ADD_INVENTORY = "ADD_INVENTORY";
 export const GET_INVENTORY_DATA = "GET_INVENTORY_DATA";
+export const GET_COUNT = "GET_COUNT";
