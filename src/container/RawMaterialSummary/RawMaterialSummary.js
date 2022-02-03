@@ -4,13 +4,14 @@ import classes from './RawMaterialSummary.module.css';
 class ConnectedRawMaterialSummary extends Component {
 
     state = {
-        rawMaterialSummary : {}
+        rawMaterialSummary : []
     }
     componentDidMount(){
         console.log(this.props.count)
-        let updatedRawMaterialSummary = {};
+        let updatedRawMaterialSummary = [];
 
         this.props.count.map(el=>{
+            console.log("eel", el)
             if(el.title === this.props.type){
                 updatedRawMaterialSummary = el.availableRawMaterial
             }
@@ -25,8 +26,8 @@ class ConnectedRawMaterialSummary extends Component {
 
             return (
                 <tr>
-                    <td style={{textTransform: 'capitalize' }}>{igkey}</td>
-                    <td> {this.state.rawMaterialSummary[igkey]} </td>
+                    <td style={{textTransform: 'capitalize' }}>{igkey.name}</td>
+                    <td> {igkey.count} </td>
                 </tr>
             ) 
         })
