@@ -67,6 +67,7 @@ export const ORDER_LIST_COLUMNS =  [
      Filter: SelectColumnFilter, 
      filter: 'includes',
    },
+  
 ]
 
 export const INVENTORY_LIST_COLUMNS =  [

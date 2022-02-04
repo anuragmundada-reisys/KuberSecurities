@@ -14,9 +14,10 @@ function mapDispatchToProps(dispatch) {
 }
 
 class ConnectedOrder extends Component {
+   
     state ={
         orderForm : {
-            customerName: {
+          /*   customerName: {
                 elementType: 'input',
                 elementConfig: {
                   type: 'text',
@@ -24,7 +25,7 @@ class ConnectedOrder extends Component {
                 },
                 value: '',
                 label: 'Customer Name'
-            },
+            }, */
             productId: {
                 elementType: 'select',
                 elementConfig: {
@@ -34,7 +35,7 @@ class ConnectedOrder extends Component {
                 value: '',
                 label: 'Product Type',
             },
-            quantity: {
+           /*  quantity: {
                 elementType: 'input',
                 elementConfig: {
                     type: 'number',
@@ -63,7 +64,7 @@ class ConnectedOrder extends Component {
                 },
                 value: '',
                 label: 'Order Date'
-            },
+            }, */
         },
     }
 
@@ -80,13 +81,18 @@ class ConnectedOrder extends Component {
         })
         
         let updatedOrderForm = {...this.state.orderForm}
-     
 
         let updatedProductTypeElement = { ...updatedOrderForm.productId}
          updatedProductTypeElement.elementConfig.options = productTypeOptions;
-         updatedOrderForm.productId = updatedProductTypeElement; 
 
-        this.setState({orderForm: updatedOrderForm })
+        if(this.props.isEditing){
+            console.log("product", this.props.rowData.productType)
+            updatedProductTypeElement.elementConfig.placeholder = '';
+            updatedProductTypeElement.value = this.props.rowData.productId
+        }
+        updatedOrderForm.productId = updatedProductTypeElement; 
+ 
+         this.setState({orderForm: updatedOrderForm })
     }
 
 
@@ -137,7 +143,7 @@ class ConnectedOrder extends Component {
             })
         }
         return(
-            <div className={classes.Order}>
+            <div className={ this.props.isEditing? classes.EditOrder : classes.Order}>
                 <h4 className={classes.Title}>Enter Order Details</h4>
                 <form>
                     {formElementArray.map(formElement => (

@@ -10,6 +10,20 @@
     flex-direction: column;
 }
 
+.EditOrder {
+    margin: 10px auto;
+    width:auto;
+    text-align: center;
+    box-shadow: 0 2px 3px #ccc;
+    box-sizing: border-box;
+    border: 2px solid #eee;
+    display: flex;
+    align-content: center;
+    flex-direction: column;
+    overflow-y: scroll;
+    position: relative;
+}
+
 .Title {
     color: #5e1d8a;
     margin-top: 7px;
