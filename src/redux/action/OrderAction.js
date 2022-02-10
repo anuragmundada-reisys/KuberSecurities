@@ -11,6 +11,17 @@ export function addOrder(payload) {
     }
   };
 
+export function updateOrder(payload) {
+    return function(dispatch){
+        return axios.patch('/kuberbeverages/orders/v1', payload).then((res)=>{
+            console.log('res', res)
+         //  dispatch({ type: ADD_ORDER, payload: payload }); //disptach success
+        }).catch(err=>{
+            console.log("error", err)
+        })
+    }
+};
+
 export function getAllOrders(){
     return function(dispatch) {
         return axios.get('/kuberbeverages/orders/v1').then(response=>{

@@ -1,8 +1,9 @@
 table{
     margin: 15px auto;
     z-index: 50;
+    box-shadow: 1px 2px #eee;
 }
 td, th {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 8px 15px;
 }

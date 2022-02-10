@@ -6,8 +6,10 @@ import Button from '../../component/UI/Button/Button';
 import classes from './OrderList.module.css';
 import { ORDER_LIST_COLUMNS } from '../../component/UI/Table/Utils';
 import { FiEdit } from 'react-icons/fi';
+import { BsBoxArrowUpRight } from 'react-icons/bs';
 import Modal from '../../component/UI/Modal/Modal';
 import Order from './Order';
+import OrderDetails from './OrderDetails';
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -18,7 +20,9 @@ function mapDispatchToProps(dispatch) {
 class ConnectedOrderList extends Component {
     state = {
       isEditing: false,
-      rowData: {}
+      rowData: {},
+        viewOrderDetails: false,
+
     }
     componentDidMount() {
       this.props.getAllOrders()
@@ -29,14 +33,18 @@ class ConnectedOrderList extends Component {
     }
 
     editOrderHandler = (orderId, rowData) => {
-      // this.props.navigate('/order/'+ {orderId} , {replace:true})
       this.setState({isEditing: true, rowData: rowData})
       console.log(rowData)
     }
 
+    viewOrderDetailsHandler = (orderId, rowData) => {
+        console.log(rowData)
+        this.setState({viewOrderDetails: true, rowData: rowData})
+    }
+
     modalClosedHandler =()=>{
       this.setState({
-          isEditing: false
+          isEditing: false, viewOrderDetails: false
       })
     }
    
@@ -48,7 +56,10 @@ class ConnectedOrderList extends Component {
              {this.state.isEditing ? 
               <Modal show={this.state.isEditing} modalClosed={this.modalClosedHandler}>
                 <Order isEditing={this.state.isEditing} rowData={this.state.rowData} />
-              </Modal> :
+              </Modal> : this.state.viewOrderDetails ?
+                     <Modal show={this.state.viewOrderDetails} modalClosed={this.modalClosedHandler}>
+                        <OrderDetails rowData={this.state.rowData}/>
+                     </Modal> :
               <>
               <div className={classes.AddOrder}>
                <span className={classes.Text}>Did you get any new Order?</span>
@@ -62,13 +73,16 @@ class ConnectedOrderList extends Component {
                   Cell: (props) => {
                     const rowData = props.row.original;
                     const orderId = rowData.orderId
-                    return (
-                      <div>
-                        <span>
-                          <FiEdit onClick={()=>this.editOrderHandler( orderId, rowData)}/>
-                        </span>
-                      </div>
-                    );
+                      console.log("row", rowData)
+                          return (
+                              <div className={classes.ActionItems}>
+                                  {!rowData.status ?   <span>
+                                     <FiEdit onClick={()=>this.editOrderHandler( orderId, rowData)}/>
+                                    </span> : null}
+                                  <p className={classes.ViewDetails} onClick={()=>this.viewOrderDetailsHandler( orderId, rowData)}> View Details
+                                      <BsBoxArrowUpRight className={classes.ViewDetailsIcon}/></p>
+                              </div>
+                          );
                   },
                 }]} data={data} />
               </div>

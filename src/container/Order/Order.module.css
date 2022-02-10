@@ -24,6 +24,27 @@
     position: relative;
 }
 
+.addMoreOrder {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #5e1d8a;
+    justify-content: center;
+}
+
+.addMoreOrderButton {
+    margin: 3px  0  0 4px;
+}
+
+.moreOrderElement {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    width: 90%;
+}
+
 .Title {
     color: #5e1d8a;
     margin-top: 7px;
@@ -37,4 +58,14 @@
     .Order{
         width: 400px
     }
+
+    .addMoreOrder {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #5e1d8a;
+        justify-content: center;
+    }
+
 }

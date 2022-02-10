@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import classes from './RawMaterialSummary.module.css';
+import classes from './TableSummary.module.css';
 class ConnectedRawMaterialSummary extends Component {
 
     state = {
