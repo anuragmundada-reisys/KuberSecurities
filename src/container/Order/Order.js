@@ -2,18 +2,22 @@ import React, {Component} from 'react';
 import Button from '../../component/UI/Button/Button';
 import Input from '../../component/UI/FormElement/FormElement';
 import classes from './Order.module.css';
-import { addOrder } from '../../redux/action/OrderAction';
+import { addOrder, updateOrder } from '../../redux/action/OrderAction';
 import { getMasterData } from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
+import { GoDiffAdded } from 'react-icons/go';
+import { v4 as uuidv } from 'uuid';
 
 function mapDispatchToProps(dispatch) {
     return {
         addOrder: order => dispatch(addOrder(order)),
-        getMasterData: ()=> dispatch(getMasterData())
+        updateOrder: order => dispatch(updateOrder(order)),
+        getMasterData: ()=> dispatch(getMasterData()),
     };
 }
 
 class ConnectedOrder extends Component {
+
     state ={
         orderForm : {
             customerName: {
@@ -65,6 +69,9 @@ class ConnectedOrder extends Component {
                 label: 'Order Date'
             },
         },
+        moreOrder: false,
+        orders: [],
+        editOrders:[]
     }
 
   async componentDidMount(){
@@ -80,35 +87,58 @@ class ConnectedOrder extends Component {
         })
         
         let updatedOrderForm = {...this.state.orderForm}
-     
 
         let updatedProductTypeElement = { ...updatedOrderForm.productId}
          updatedProductTypeElement.elementConfig.options = productTypeOptions;
-         updatedOrderForm.productId = updatedProductTypeElement; 
 
-        this.setState({orderForm: updatedOrderForm })
+        let updatedQuantityElement = { ...updatedOrderForm.quantity}
+        let updatedStatusElement = { ...updatedOrderForm.status}
+         updatedProductTypeElement.elementConfig.options = productTypeOptions;
+
+         let updatedOrders = [...this.state.editOrders];
+        if(this.props.isEditing){
+            updatedStatusElement.elementConfig.placeholder = '';
+            updatedStatusElement.value = this.props.rowData.status
+            updatedOrders = [...this.props.rowData.orders];
+        }
+          updatedOrderForm.productId = updatedProductTypeElement;
+          updatedOrderForm.quantity = updatedQuantityElement;
+          updatedOrderForm.status = updatedStatusElement;
+
+          this.setState({orderForm: updatedOrderForm, editOrders: updatedOrders })
     }
-
 
     addOrderHandler = (event) => {
         event.preventDefault();
-
-        const integerConvertibleKeys = ['productId', 'quantity'];
-
-         const formData = {};
+        const formData = { }
         for(let key in this.state.orderForm){
-            if(integerConvertibleKeys.includes(key)){
-                formData[key] = parseInt(this.state.orderForm[key].value)
-            }else if(key === 'status'){
+            if(key === 'status'){
                 formData[key] = JSON.parse(this.state.orderForm[key].value)
             }else{
                 formData[key] = this.state.orderForm[key].value
             }
-           
         }
+        formData['orders'] = this.state.orders;
+        delete formData.productId;
+        delete formData.quantity;
+        console.log(formData)
         this.props.addOrder(formData);
         alert('form submitted!')
         this.props.navigate('/order', {replace:true});
+    }
+
+    updateOrderHandler = (event) => {
+        event.preventDefault();
+
+        let editFormData = {
+            orderId: this.props.rowData.orderId,
+            status: JSON.parse(this.state.orderForm['status'].value),
+            orders: [...this.state.editOrders]
+        };
+
+        this.props.updateOrder(editFormData);
+        alert('form submitted!');
+        window.location.reload();
     }
 
     inputChangeHandler = (event, keyIdentifier) => {
@@ -123,31 +153,117 @@ class ConnectedOrder extends Component {
         this.setState({orderForm: updatedOrderForm})
     }
 
+    multiOrderInputChangeHandler = (id, key ,event) => {
+        if(this.props.isEditing) {
+            const newEditedOrders = this.state.editOrders.map(i => {
+                if(id === i.orderDetailsId) {
+                    i[key] = parseInt(event.target.value)
+                }
+                return i;
+            })
+            this.setState({editOrders: newEditedOrders})
+        }else{
+            const newOrders = this.state.orders.map(i => {
+                if(id === i.id) {
+                    i[key] = parseInt(event.target.value)
+                }
+                return i;
+            })
+            this.setState({orders: newOrders})
+        }
+    }
+
     cancelHandler = () => {
         this.props.navigate('/order', {replace:true});
         alert('Cancel!!')
     }
 
+    moreOrderHandler = () => {
+        let newOrders = [...this.state.orders, {
+            id: uuidv(),
+            productId:'',
+            quantity:''
+        }]
+        this.setState({moreOrder: true, orders: newOrders})
+    }
     render() {
         const formElementArray = [];
+        const editFormElement = ['status'];
+        const orderElement = ['productId', 'quantity'];
+        const statusAndDate = ['status', 'orderDate']
+        const orderElementArray = [];
         for(let key in this.state.orderForm){
-            formElementArray.push({
-                id: key,
-                config: this.state.orderForm[key]
-            })
+            if(this.props.isEditing && editFormElement.includes(key)){
+                formElementArray.push({
+                    id: key,
+                    config: this.state.orderForm[key]
+                })
+            }else if(!this.props.isEditing && statusAndDate.includes(key)) {
+                formElementArray.push({
+                    id: key,
+                    config: this.state.orderForm[key]
+                })
+            }
+
+            if((this.state.moreOrder || this.props.isEditing) && orderElement.includes(key)){
+                orderElementArray.push({
+                    id: key,
+                    config: this.state.orderForm[key]
+                })
+            }
+
         }
         return(
-            <div className={classes.Order}>
-                <h4 className={classes.Title}>Enter Order Details</h4>
+            <div className={ this.props.isEditing? classes.EditOrder : classes.Order}>
+                <h4 className={classes.Title}>{ this.props.isEditing? 'Update Order Details' : 'Enter Order Details'}</h4>
                 <form>
+                    {
+                        !this.props.isEditing &&
+                        <>
+                            <Input elementType={this.state.orderForm['customerName'].elementType}
+                                   elementConfig={this.state.orderForm['customerName'].elementConfig}
+                                   value={this.state.orderForm['customerName'].value}
+                                   label={this.state.orderForm['customerName'].label}
+                                   changed={(event)=>this.inputChangeHandler(event, 'customerName' )}/>
+                            <div className={classes.addMoreOrder}>
+                                <p >Add Product Type and Quantity</p>
+                                <GoDiffAdded className={classes.addMoreOrderButton} onClick={this.moreOrderHandler}/>
+                            </div>
+                        </>
+                    }
+
+                      { this.props.isEditing ?
+                          this.state.editOrders.map((order)=>(
+                              <div className={classes.moreOrderElement} key={order.orderDetailsId}>
+                                  {orderElementArray.map(ele => (
+                                      <Input elementType={ele.config.elementType}
+                                             elementConfig={ele.config.elementConfig}
+                                             value={order[ele.id]}
+                                             label={ele.config.label}
+                                             changed={(event)=>this.multiOrderInputChangeHandler( order.orderDetailsId, ele.id, event )}/>
+                                  ) )}
+                              </div>
+                          )) :
+                          this.state.orders.map((order)=>(
+                          <div className={classes.moreOrderElement} key={order.id}>
+                              {orderElementArray.map(ele => (
+                                  <Input elementType={ele.config.elementType}
+                                         elementConfig={ele.config.elementConfig}
+                                         value={order[ele.id]}
+                                         label={ele.config.label}
+                                         changed={(event)=>this.multiOrderInputChangeHandler( order.id, ele.id, event )}/>
+                              ) )}
+                          </div>
+                      ))}
                     {formElementArray.map(formElement => (
-                        <Input elementType={formElement.config.elementType}
-                         elementConfig={formElement.config.elementConfig} 
-                         value={formElement.config.value}
-                         label={formElement.config.label}
-                         changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
+                            <Input elementType={formElement.config.elementType}
+                                   elementConfig={formElement.config.elementConfig}
+                                   value={formElement.config.value}
+                                   label={formElement.config.label}
+                                   changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
                     ) )}
-                    <Button btnType='Success' clicked={this.addOrderHandler}> ADD </Button>
+                    { this.props.isEditing?  <Button btnType='Success' clicked={this.updateOrderHandler}> UPDATE </Button> :
+                        <Button btnType='Success' clicked={this.addOrderHandler}> ADD </Button>}
                     <Button btnType='Danger' clicked={this.cancelHandler}> CANCEL </Button>
                 </form>
             </div>

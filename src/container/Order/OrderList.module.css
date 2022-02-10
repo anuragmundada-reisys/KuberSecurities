@@ -7,3 +7,20 @@
     margin: 20px 10px 0 30px;
     font-weight: 400;
 }
+.ActionItems {
+    display: flex;
+    justify-content: space-around;
+}
+
+.ViewDetails{
+    display: inline-flex;
+    font-size: small;
+}
+.ViewDetails:hover{
+    color: #5e1d8a;
+    border-bottom: 1px solid #5e1d8a;
+}
+
+.ViewDetailsIcon{
+    margin: 2px 0 0 2px;
+}

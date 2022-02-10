@@ -16,9 +16,9 @@ const formElement = (props) => {
             break;
         case 'select':
             inputElement = <select required className={classes.InputElement}
-            value={props.value} 
-            onChange={props.changed}>
-            <option disabled={true} value="">{props.elementConfig.placeholder}</option>,
+                                   value={props.value}
+                                   onChange={props.changed}>
+                <option disabled={true} value="">{props.elementConfig.placeholder}</option>,
                 { props.elementConfig.options.map(
                     option => (<option className={classes.SelectOption} value={option.id} >{option.displayValue}</option>)
                 )}
@@ -27,13 +27,6 @@ const formElement = (props) => {
         case 'datePicker' :
             inputElement = <DatePicker className={classes.InputElement} selected={props.value} 
             onChange={props.changed} {...props.elementConfig} placeholderText={props.elementConfig.placeholder}/>
-            break;
-        case 'input' :
-            inputElement = <input  
-            className={classes.InputElement} 
-            {...props.elementConfig} 
-            value={props.value} 
-            onChange={props.changed}/>
             break;
         default:
             break;

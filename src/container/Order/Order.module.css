@@ -10,6 +10,41 @@
     flex-direction: column;
 }
 
+.EditOrder {
+    margin: 10px auto;
+    width:auto;
+    text-align: center;
+    box-shadow: 0 2px 3px #ccc;
+    box-sizing: border-box;
+    border: 2px solid #eee;
+    display: flex;
+    align-content: center;
+    flex-direction: column;
+    overflow-y: scroll;
+    position: relative;
+}
+
+.addMoreOrder {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #5e1d8a;
+    justify-content: center;
+}
+
+.addMoreOrderButton {
+    margin: 3px  0  0 4px;
+}
+
+.moreOrderElement {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    width: 90%;
+}
+
 .Title {
     color: #5e1d8a;
     margin-top: 7px;
@@ -23,4 +58,14 @@
     .Order{
         width: 400px
     }
+
+    .addMoreOrder {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #5e1d8a;
+        justify-content: center;
+    }
+
 }

@@ -45,16 +45,6 @@ export const ORDER_LIST_COLUMNS =  [
      filter: 'includes',
    },
    {
-     Header: "Product Type",
-     accessor: "productType",
-     Filter: SelectColumnFilter, 
-     filter: 'includes',
-   },
-   {
-     Header: "Quantity",
-     accessor: "quantity",
-   },
-   {
      Header: "Status",
      accessor: "status",
      Cell: ({ row: { original } }) => {
@@ -67,6 +57,7 @@ export const ORDER_LIST_COLUMNS =  [
      Filter: SelectColumnFilter, 
      filter: 'includes',
    },
+  
 ]
 
 export const INVENTORY_LIST_COLUMNS =  [
