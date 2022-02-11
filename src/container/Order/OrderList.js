@@ -73,7 +73,6 @@ class ConnectedOrderList extends Component {
                   Cell: (props) => {
                     const rowData = props.row.original;
                     const orderId = rowData.orderId;
-                      console.log("row", rowData)
                           return (
                               <div className={classes.ActionItems}>
                                   {!rowData.status ?   <span>

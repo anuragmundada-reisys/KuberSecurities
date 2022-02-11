@@ -6,7 +6,6 @@ import { addOrder, updateOrder } from '../../redux/action/OrderAction';
 import { getMasterData } from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
 import { GoDiffAdded } from 'react-icons/go';
-import { v4 as uuidv } from 'uuid';
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -87,8 +86,8 @@ class ConnectedOrder extends Component {
             },
         },
         moreOrder: false,
-        orders: [],
-        editOrders:[],
+        orderDetails: [],
+       // editOrders:[],
         totalAmount: 0,
     }
 
@@ -113,7 +112,7 @@ class ConnectedOrder extends Component {
         let updatedStatusElement = { ...updatedOrderForm.status}
          updatedProductTypeElement.elementConfig.options = productTypeOptions;
 
-         let updatedOrders = [...this.state.editOrders];
+         let updatedOrders = [...this.state.orderDetails];
         let updatedTotalAmount = this.state.totalAmount;
         if(this.props.isEditing){
             updatedStatusElement.elementConfig.placeholder = '';
@@ -125,11 +124,12 @@ class ConnectedOrder extends Component {
           updatedOrderForm.quantity = updatedQuantityElement;
           updatedOrderForm.status = updatedStatusElement;
 
-          this.setState({orderForm: updatedOrderForm, editOrders: updatedOrders, totalAmount: updatedTotalAmount })
+          this.setState({orderForm: updatedOrderForm, orderDetails: updatedOrders, totalAmount: updatedTotalAmount })
     }
 
     addOrderHandler = (event) => {
         event.preventDefault();
+        const deleteKeys = ['productId', 'amount', 'rate', 'quantity']
         const formData = { }
         for(let key in this.state.orderForm){
             if(key === 'status'){
@@ -138,11 +138,11 @@ class ConnectedOrder extends Component {
                 formData[key] = this.state.orderForm[key].value
             }
         }
-        formData['orders'] = this.state.orders;
+        formData['orders'] = this.state.orderDetails;
         formData['totalAmount'] = this.state.totalAmount;
-        delete formData.productId;
-        delete formData.quantity;
-        console.log(formData)
+        for(let key of deleteKeys){
+            delete formData[key];
+        }
         this.props.addOrder(formData);
         alert('form submitted!')
         this.props.navigate('/order', {replace:true});
@@ -153,7 +153,7 @@ class ConnectedOrder extends Component {
         let editFormData = {
             orderId: this.props.rowData.orderId,
             status: JSON.parse(this.state.orderForm['status'].value),
-            orders: [...this.state.editOrders],
+            orders: [...this.state.orderDetails],
             totalAmount: this.state.totalAmount,
         };
 
@@ -176,21 +176,8 @@ class ConnectedOrder extends Component {
 
     multiOrderInputChangeHandler = (id, key ,event) => {
         let updatedTotalAmount = this.state.totalAmount;
-
-        if(this.props.isEditing) {
-            const newEditedOrders = this.state.editOrders.map(i => {
+            const newOrders = this.state.orderDetails.map(i => {
                 if(id === i.orderDetailsId) {
-                    i[key] = parseInt(event.target.value);
-                    i['amount'] = i.rate * i.quantity;
-                    //updatedTotalAmount = updatedTotalAmount + i.amount;
-                }
-                return i;
-            })
-            updatedTotalAmount =  newEditedOrders.map(order=>order.amount).reduce((prevAmount, currAmount) => prevAmount + currAmount,0)
-            this.setState({editOrders: newEditedOrders, totalAmount: updatedTotalAmount })
-        }else{
-            const newOrders = this.state.orders.map(i => {
-                if(id === i.id) {
                     i[key] = parseInt(event.target.value);
                     i['amount'] = i.rate * i.quantity;
                 }
@@ -198,8 +185,7 @@ class ConnectedOrder extends Component {
             })
 
             updatedTotalAmount =  newOrders.map(order=>order.amount).reduce((prevAmount, currAmount) => prevAmount + currAmount,0)
-            this.setState({orders: newOrders, totalAmount: updatedTotalAmount })
-        }
+            this.setState({orderDetails: newOrders, totalAmount: updatedTotalAmount })
     }
 
     cancelHandler = () => {
@@ -208,14 +194,14 @@ class ConnectedOrder extends Component {
     }
 
     moreOrderHandler = () => {
-        let newOrders = [...this.state.orders, {
-            id: uuidv(),
+        let newOrders = [...this.state.orderDetails, {
+            orderDetailsId: Math.random(),
             productId:'',
             quantity:'',
             rate:'',
             amount:'',
         }]
-        this.setState({moreOrder: true, orders: newOrders})
+        this.setState({moreOrder: true, orderDetails: newOrders})
     }
     render() {
         const formElementArray = [];
@@ -262,31 +248,20 @@ class ConnectedOrder extends Component {
                             </div>
                         </>
                     }
-
-                      { this.props.isEditing ?
-                          this.state.editOrders.map((order)=>(
-                              <div className={classes.moreOrderElement} key={order.orderDetailsId}>
-                                  {orderElementArray.map(ele => (
-                                      <Input elementType={ele.config.elementType}
-                                             elementConfig={ele.config.elementConfig}
-                                             value={order[ele.id]}
-                                             label={ele.config.label}
-                                             changed={(event)=>this.multiOrderInputChangeHandler( order.orderDetailsId, ele.id, event )}
-                                            />
-                                  ) )}
-                              </div>
-                          )) :
-                          this.state.orders.map((order)=>(
-                          <div className={classes.moreOrderElement} key={order.id}>
-                              {orderElementArray.map(ele => (
-                                  <Input elementType={ele.config.elementType}
-                                         elementConfig={ele.config.elementConfig}
-                                         value={order[ele.id]}
-                                         label={ele.config.label}
-                                         changed={(event)=>this.multiOrderInputChangeHandler( order.id, ele.id, event )}/>
-                              ) )}
-                          </div>
-                      ))}
+                    {
+                        this.state.orderDetails.map((order)=>(
+                            <div className={classes.moreOrderElement} key={order.orderDetailsId}>
+                                {orderElementArray.map(ele => (
+                                    <Input elementType={ele.config.elementType}
+                                           elementConfig={ele.config.elementConfig}
+                                           value={order[ele.id]}
+                                           label={ele.config.label}
+                                           changed={(event)=>this.multiOrderInputChangeHandler( order.orderDetailsId, ele.id, event )}
+                                    />
+                                ) )}
+                            </div>
+                        ))
+                    }
                     {formElementArray.map(formElement => (
                             <Input elementType={formElement.config.elementType}
                                    elementConfig={formElement.config.elementConfig}
