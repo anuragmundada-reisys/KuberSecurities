@@ -29,7 +29,7 @@ class ConnectedInventory extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'number',
-                    placeHolder: 'Enter Ordered Quantity'
+                    placeHolder: 'Enter Number of Cases'
                 },
                 value: '',
                 label: 'Quantity'

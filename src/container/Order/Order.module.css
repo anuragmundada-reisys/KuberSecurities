@@ -1,6 +1,6 @@
 .Order {
     margin: 130px auto;
-    width: 50em;
+    width: 53em;
     text-align: center;
     box-shadow: 0 2px 3px #ccc;
     box-sizing: border-box;
@@ -33,6 +33,10 @@
     justify-content: center;
 }
 
+.CloseIcon {
+    margin-top: 50px;
+    width: 100px;
+}
 .addMoreOrderButton {
     margin: 3px  0  0 4px;
 }
@@ -46,7 +50,7 @@
 }
 
 .TotalAmount {
-    color: #5e1d8a;
+    color: green;
     font-weight: 700;
     margin: 10px;
 }

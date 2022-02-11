@@ -6,6 +6,7 @@ import { addOrder, updateOrder } from '../../redux/action/OrderAction';
 import { getMasterData } from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
 import { GoDiffAdded } from 'react-icons/go';
+import { CgCloseO } from 'react-icons/cg';
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -203,6 +204,13 @@ class ConnectedOrder extends Component {
         }]
         this.setState({moreOrder: true, orderDetails: newOrders})
     }
+
+    removeOrderDetailHandler = (orderDetailId) => {
+        let updatedOrderDetails =  [...this.state.orderDetails]
+        let index = updatedOrderDetails.findIndex(order  => order.orderDetailsId === orderDetailId)
+        updatedOrderDetails.splice(index, 1);
+        this.setState({orderDetails: updatedOrderDetails})
+    }
     render() {
         const formElementArray = [];
         const editFormElement = ['status'];
@@ -259,6 +267,7 @@ class ConnectedOrder extends Component {
                                            changed={(event)=>this.multiOrderInputChangeHandler( order.orderDetailsId, ele.id, event )}
                                     />
                                 ) )}
+                                {!this.props.isEditing && <CgCloseO onClick={()=>this.removeOrderDetailHandler(order.orderDetailsId)} className={classes.CloseIcon}/>}
                             </div>
                         ))
                     }
