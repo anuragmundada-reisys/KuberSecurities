@@ -47,6 +47,23 @@ class ConnectedOrder extends Component {
                 value: '',
                 label: 'Quantity'
             },
+            rate: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'number',
+                    placeHolder: 'Enter Rate'
+                },
+                value: '',
+                label: 'Rate'
+            },
+            amount: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'number',
+                },
+                value: '',
+                label: 'Amount'
+            },
             status: {
                 elementType: 'select',
                 elementConfig: {
@@ -71,7 +88,8 @@ class ConnectedOrder extends Component {
         },
         moreOrder: false,
         orders: [],
-        editOrders:[]
+        editOrders:[],
+        totalAmount: 0,
     }
 
   async componentDidMount(){
@@ -96,16 +114,18 @@ class ConnectedOrder extends Component {
          updatedProductTypeElement.elementConfig.options = productTypeOptions;
 
          let updatedOrders = [...this.state.editOrders];
+        let updatedTotalAmount = this.state.totalAmount;
         if(this.props.isEditing){
             updatedStatusElement.elementConfig.placeholder = '';
             updatedStatusElement.value = this.props.rowData.status
             updatedOrders = [...this.props.rowData.orders];
+            updatedTotalAmount = this.props.rowData.totalAmount;
         }
           updatedOrderForm.productId = updatedProductTypeElement;
           updatedOrderForm.quantity = updatedQuantityElement;
           updatedOrderForm.status = updatedStatusElement;
 
-          this.setState({orderForm: updatedOrderForm, editOrders: updatedOrders })
+          this.setState({orderForm: updatedOrderForm, editOrders: updatedOrders, totalAmount: updatedTotalAmount })
     }
 
     addOrderHandler = (event) => {
@@ -119,6 +139,7 @@ class ConnectedOrder extends Component {
             }
         }
         formData['orders'] = this.state.orders;
+        formData['totalAmount'] = this.state.totalAmount;
         delete formData.productId;
         delete formData.quantity;
         console.log(formData)
@@ -129,11 +150,11 @@ class ConnectedOrder extends Component {
 
     updateOrderHandler = (event) => {
         event.preventDefault();
-
         let editFormData = {
             orderId: this.props.rowData.orderId,
             status: JSON.parse(this.state.orderForm['status'].value),
-            orders: [...this.state.editOrders]
+            orders: [...this.state.editOrders],
+            totalAmount: this.state.totalAmount,
         };
 
         this.props.updateOrder(editFormData);
@@ -154,22 +175,30 @@ class ConnectedOrder extends Component {
     }
 
     multiOrderInputChangeHandler = (id, key ,event) => {
+        let updatedTotalAmount = this.state.totalAmount;
+
         if(this.props.isEditing) {
             const newEditedOrders = this.state.editOrders.map(i => {
                 if(id === i.orderDetailsId) {
-                    i[key] = parseInt(event.target.value)
+                    i[key] = parseInt(event.target.value);
+                    i['amount'] = i.rate * i.quantity;
+                    //updatedTotalAmount = updatedTotalAmount + i.amount;
                 }
                 return i;
             })
-            this.setState({editOrders: newEditedOrders})
+            updatedTotalAmount =  newEditedOrders.map(order=>order.amount).reduce((prevAmount, currAmount) => prevAmount + currAmount,0)
+            this.setState({editOrders: newEditedOrders, totalAmount: updatedTotalAmount })
         }else{
             const newOrders = this.state.orders.map(i => {
                 if(id === i.id) {
-                    i[key] = parseInt(event.target.value)
+                    i[key] = parseInt(event.target.value);
+                    i['amount'] = i.rate * i.quantity;
                 }
                 return i;
             })
-            this.setState({orders: newOrders})
+
+            updatedTotalAmount =  newOrders.map(order=>order.amount).reduce((prevAmount, currAmount) => prevAmount + currAmount,0)
+            this.setState({orders: newOrders, totalAmount: updatedTotalAmount })
         }
     }
 
@@ -182,14 +211,16 @@ class ConnectedOrder extends Component {
         let newOrders = [...this.state.orders, {
             id: uuidv(),
             productId:'',
-            quantity:''
+            quantity:'',
+            rate:'',
+            amount:'',
         }]
         this.setState({moreOrder: true, orders: newOrders})
     }
     render() {
         const formElementArray = [];
         const editFormElement = ['status'];
-        const orderElement = ['productId', 'quantity'];
+        const orderElement = ['productId', 'quantity', 'rate', 'amount'];
         const statusAndDate = ['status', 'orderDate']
         const orderElementArray = [];
         for(let key in this.state.orderForm){
@@ -240,7 +271,8 @@ class ConnectedOrder extends Component {
                                              elementConfig={ele.config.elementConfig}
                                              value={order[ele.id]}
                                              label={ele.config.label}
-                                             changed={(event)=>this.multiOrderInputChangeHandler( order.orderDetailsId, ele.id, event )}/>
+                                             changed={(event)=>this.multiOrderInputChangeHandler( order.orderDetailsId, ele.id, event )}
+                                            />
                                   ) )}
                               </div>
                           )) :
@@ -262,6 +294,8 @@ class ConnectedOrder extends Component {
                                    label={formElement.config.label}
                                    changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
                     ) )}
+                    {this.props.isEditing || this.state.moreOrder ? <p className={classes.TotalAmount}> TOTAL AMOUNT : {this.state.totalAmount}</p>: null}
+
                     { this.props.isEditing?  <Button btnType='Success' clicked={this.updateOrderHandler}> UPDATE </Button> :
                         <Button btnType='Success' clicked={this.addOrderHandler}> ADD </Button>}
                     <Button btnType='Danger' clicked={this.cancelHandler}> CANCEL </Button>

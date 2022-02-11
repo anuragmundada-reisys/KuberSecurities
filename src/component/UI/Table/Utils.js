@@ -44,6 +44,10 @@ export const ORDER_LIST_COLUMNS =  [
      Filter: SelectColumnFilter, 
      filter: 'includes',
    },
+    {
+        Header: "Total Amount",
+        accessor: "totalAmount",
+    },
    {
      Header: "Status",
      accessor: "status",

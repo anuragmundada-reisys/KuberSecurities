@@ -1,8 +1,8 @@
 .Input {
-    width: 80%;
+    width: auto;
     box-sizing: border-box;
     padding: 6px 10px;
-    margin: 5px 50px
+    margin: 5px 5px
 }
 
 .Label {

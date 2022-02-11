@@ -72,12 +72,12 @@ class ConnectedOrderList extends Component {
                   accessor: "actions",
                   Cell: (props) => {
                     const rowData = props.row.original;
-                    const orderId = rowData.orderId
+                    const orderId = rowData.orderId;
                       console.log("row", rowData)
                           return (
                               <div className={classes.ActionItems}>
                                   {!rowData.status ?   <span>
-                                     <FiEdit onClick={()=>this.editOrderHandler( orderId, rowData)}/>
+                                     <FiEdit onClick={()=>this.editOrderHandler( orderId,  rowData)}/>
                                     </span> : null}
                                   <p className={classes.ViewDetails} onClick={()=>this.viewOrderDetailsHandler( orderId, rowData)}> View Details
                                       <BsBoxArrowUpRight className={classes.ViewDetailsIcon}/></p>
