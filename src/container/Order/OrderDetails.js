@@ -22,10 +22,11 @@ class ConnectedOrderDetails extends Component {
                     <tr>
                         <td style={{textTransform: 'capitalize' }}>{item.productType}</td>
                         <td> {item.quantity} </td>
+                        <td> {item.rate} </td>
+                        <td> {item.amount} </td>
                     </tr>
                 )
             })
-
         return(
             <>
                 <h3 style={{color:'#5e1d8a'}}><strong> Order Details:</strong></h3>
@@ -33,6 +34,8 @@ class ConnectedOrderDetails extends Component {
                     <tr>
                         <th> Product Type</th>
                         <th> Quantity</th>
+                        <th> Rate</th>
+                        <th> Amount </th>
                     </tr>
                     {orderDetails}
                 </table>

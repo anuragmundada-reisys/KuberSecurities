@@ -1,6 +1,6 @@
 .Order {
     margin: 130px auto;
-    width: 50%;
+    width: 53em;
     text-align: center;
     box-shadow: 0 2px 3px #ccc;
     box-sizing: border-box;
@@ -33,6 +33,10 @@
     justify-content: center;
 }
 
+.CloseIcon {
+    margin-top: 50px;
+    width: 100px;
+}
 .addMoreOrderButton {
     margin: 3px  0  0 4px;
 }
@@ -42,12 +46,18 @@
     justify-content: space-between;
     box-sizing: border-box;
     padding: 6px 8px;
-    width: 90%;
+    width: 50em;
 }
 
+.TotalAmount {
+    color: green;
+    font-weight: 700;
+    margin: 10px;
+}
 .Title {
     color: #5e1d8a;
     margin-top: 7px;
+    font-weight: 600;
 }
 
 .Input {
