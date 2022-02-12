@@ -54,6 +54,7 @@ export const ORDER_LIST_COLUMNS =  [
      Cell: ({ row: { original } }) => {
          return original.status === true ? 'Success' : 'Pending';
      },
+
    },
    {
      Header: "Order Date",
