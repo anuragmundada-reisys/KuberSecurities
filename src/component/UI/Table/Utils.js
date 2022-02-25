@@ -1,8 +1,8 @@
-import { SelectColumnFilter } from './ColumnFilter';
+import {SelectAssignedStatusFilter, SelectColumnFilter} from './ColumnFilter';
 
 export function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
-  }
+}
 
 export const RAW_MATERIAL_COLUMNS =  [
   {
@@ -25,7 +25,7 @@ export const RAW_MATERIAL_COLUMNS =  [
      Header: "Status",
      accessor: "status",
      Cell: ({ row: { original } }) => {
-         return original.status === true ? 'Success' : 'Pending';
+         return original.status === true ? 'Completed' : 'Pending';
      },
    },
    {
@@ -38,6 +38,12 @@ export const RAW_MATERIAL_COLUMNS =  [
 
 
 export const ORDER_LIST_COLUMNS =  [
+    {
+        Header: "Bill Number",
+        accessor: "billNo",
+        Filter: SelectColumnFilter,
+        filter: 'includes',
+    },
   {
      Header: "Customer Name",
      accessor: "customerName",
@@ -48,11 +54,15 @@ export const ORDER_LIST_COLUMNS =  [
         Header: "Total Amount",
         accessor: "totalAmount",
     },
+    {
+        Header: "Balance Due",
+        accessor: "balanceDue",
+    },
    {
      Header: "Status",
      accessor: "status",
      Cell: ({ row: { original } }) => {
-         return original.status === true ? 'Success' : 'Pending';
+         return original.balanceDue === 0 ? 'Completed' : 'Pending';
      },
 
    },
@@ -63,6 +73,52 @@ export const ORDER_LIST_COLUMNS =  [
      filter: 'includes',
    },
   
+]
+
+export const COLLECTION_ORDERS_COLUMNS =  [
+    {
+        Header: "Bill Number",
+        accessor: "billNo",
+    },
+    {
+        Header: "Customer Name",
+        accessor: "customerName",
+    },
+    {
+        Header: "Balance Due",
+        accessor: "balanceDue",
+    },
+    {
+        Header: "Order Date",
+        accessor: "orderDate",
+    },
+    {
+        Header: "Assigned Status",
+        accessor: "assignedStatus",
+        Cell: ({row}) => {
+            const data =  row.original
+            return (
+                data.assignedStatus ?
+                    <p style={{backgroundColor: "#3cb371"}}> Assigned </p> :
+                    <p> Unassigned</p>
+            )
+        },
+    },
+    {
+        Header: "Assignee Name",
+        accessor: "assigneeName",
+        Cell: ({ row: { original } }) => {
+            return original.assigneeName === null ? '-' : original.assigneeName;
+        },
+    },
+    {
+        Header: "Updated Date",
+        accessor: "updatedDate",
+        Cell: ({ row: { original } }) => {
+            return original.updatedDate === null ? '-' : original.updatedDate;
+        },
+    },
+
 ]
 
 export const INVENTORY_LIST_COLUMNS =  [

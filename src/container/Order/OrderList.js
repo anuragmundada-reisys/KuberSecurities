@@ -10,10 +10,15 @@ import { BsBoxArrowUpRight } from 'react-icons/bs';
 import Modal from '../../component/UI/Modal/Modal';
 import Order from './Order';
 import OrderDetails from './OrderDetails';
+import CollectionFilter from "../Collection/CollectionFilter";
+import {getCollectionSearchedOrders} from "../../redux/action/CollectionAction";
+import {ToastsContainer, ToastsStore} from "react-toasts";
+import {DATA_NOT_FOUND} from "../../common/Utils";
 
 function mapDispatchToProps(dispatch) {
     return {
-        getAllOrders: ()=> dispatch(getAllOrders())
+        getAllOrders: ()=> dispatch(getAllOrders()),
+        getCollectionSearchedOrders: (params) => dispatch(getCollectionSearchedOrders(params))
     };
 }
 
@@ -21,11 +26,16 @@ class ConnectedOrderList extends Component {
     state = {
       isEditing: false,
       rowData: {},
-        viewOrderDetails: false,
-
+      viewOrderDetails: false,
+      receivedPayment: false,
+      searchOrder: false,
+      dataFound: true,
+      searchedOrders: []
     }
     componentDidMount() {
       this.props.getAllOrders()
+       .then()
+       .catch(error=> ToastsStore.error(error, 2000));
     }
 
     addOrderHandler =()=> {
@@ -34,38 +44,63 @@ class ConnectedOrderList extends Component {
 
     editOrderHandler = (orderId, rowData) => {
       this.setState({isEditing: true, rowData: rowData})
-      console.log(rowData)
     }
 
     viewOrderDetailsHandler = (orderId, rowData) => {
-        console.log(rowData)
         this.setState({viewOrderDetails: true, rowData: rowData})
     }
 
     modalClosedHandler =()=>{
       this.setState({
-          isEditing: false, viewOrderDetails: false
+          isEditing: false, viewOrderDetails: false, receivedPayment: false
       })
+    }
+
+    searchOrderHandler = async (params) => {
+        let updatedSearchedOrders = [...this.state.searchedOrders]
+        await this.props.getCollectionSearchedOrders(params).then(()=>{
+            if(this.props.collectionSearchedOrders.length === 0){
+                ToastsStore.error(DATA_NOT_FOUND, 2000);
+                this.setState({dataFound: false})
+            }
+            else if(params.orderStatus !== ''){
+                JSON.parse(params.orderStatus) ?
+                    updatedSearchedOrders = this.props.collectionSearchedOrders.filter(order => order.balanceDue === 0 ):
+                    updatedSearchedOrders = this.props.collectionSearchedOrders.filter(order => order.balanceDue !== 0 )
+                this.setState({searchedOrders: updatedSearchedOrders, searchOrder: true, dataFound:true});
+             }
+            else{
+                this.setState({searchOrder: true, dataFound:true, searchedOrders: this.props.collectionSearchedOrders });
+            }
+        }).catch(error=> ToastsStore.error(error, 2000));;
+
+    }
+
+    clearSearchHandler = () => {
+        window.location.reload()
     }
    
     render(){
-        const data = this.props.orderList;
+        const data = this.state.searchOrder ? this.state.searchedOrders :this.props.orderList;
         return(
+       <>
+        <ToastsContainer position='top_center' store={ToastsStore} />
         <div className="min-h-screen bg-gray-100 text-gray-900">
-           <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
              {this.state.isEditing ? 
               <Modal show={this.state.isEditing} modalClosed={this.modalClosedHandler}>
                 <Order isEditing={this.state.isEditing} rowData={this.state.rowData} />
               </Modal> : this.state.viewOrderDetails ?
                      <Modal show={this.state.viewOrderDetails} modalClosed={this.modalClosedHandler}>
                         <OrderDetails rowData={this.state.rowData}/>
-                     </Modal> :
+                     </Modal> :null}
               <>
               <div className={classes.AddOrder}>
                <span className={classes.Text}>Did you get any new Order?</span>
                <Button btnType='Success' clicked={this.addOrderHandler}> ADD </Button>
               </div>
               <div className="mt-4">
+                <CollectionFilter clicked={(params)=>this.searchOrderHandler(params)} clearClicked={this.clearSearchHandler} isOrderSearch={true}/>
                 <Table columns={[...ORDER_LIST_COLUMNS, 
                  {
                   Header: "Actions",
@@ -75,7 +110,7 @@ class ConnectedOrderList extends Component {
                     const orderId = rowData.orderId;
                           return (
                               <div className={classes.ActionItems}>
-                                  {!rowData.status ?   <span>
+                                  {rowData.balanceDue !== 0 ?   <span>
                                      <FiEdit onClick={()=>this.editOrderHandler( orderId,  rowData)}/>
                                     </span> : null}
                                   <p className={classes.ViewDetails} onClick={()=>this.viewOrderDetailsHandler( orderId, rowData)}> View Details
@@ -83,19 +118,20 @@ class ConnectedOrderList extends Component {
                               </div>
                           );
                   },
-                }]} data={data} />
+                }]} data={data}  dataFound={this.state.dataFound}/>
               </div>
               </>
-              }
-            
            </main>
            </div>
+       </>
          )
         }
 }
+
 function mapStateToProps(state) {
     return {
-        orderList: state.orderList
+        orderList: state.orderList,
+        collectionSearchedOrders: state.collectionSearchedOrders
     };
 }
 

@@ -2,7 +2,7 @@ import React from "react";
 import { useTable, useGlobalFilter, useFilters, useSortBy, usePagination } from "react-table";
 import Pagination from "./Pagination";
 
-function Table({ columns, data }) {
+function Table({ columns, data, dataFound }) {
   const { 
     getTableProps, 
     getTableBodyProps, 
@@ -22,6 +22,7 @@ function Table({ columns, data }) {
     useTable({
       columns,
       data,
+
     },
     useFilters,
     useGlobalFilter,
@@ -30,22 +31,11 @@ function Table({ columns, data }) {
 
   return (
       <>
-      <div className="mt-2 flex flex-col">
-        <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
+      <div className="mt-1 flex flex-col">
+        <div className="-my-1 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <div className="flex items-stretch ml-5 mt-5 mb-10 ">
-            {headerGroups.map((headerGroup) =>
-                headerGroup.headers.map((column) =>
-                column.Filter ? (
-                    <div key={column.id}>
-                    {column.render("Filter")}
-                    </div>
-                ) : null
-                )
-            )}    
-            </div> 
-            <table {...getTableProps()} className="min-w-full divide-y divide-gray-200 border-t border-gray-400">
+            <table {...getTableProps()} className="min-w-full w-auto divide-y divide-gray-200 border-t border-gray-400 content-center">
             <thead className="bg-gray-50 w-full">
             {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
@@ -68,8 +58,8 @@ function Table({ columns, data }) {
                     ))}
                     </tr>
                 ))}
-            </thead> 
-            <tbody {...getTableBodyProps()}  className="bg-white divide-y divide-gray-200">
+            </thead>
+              {dataFound && <tbody {...getTableBodyProps()}  className="bg-white divide-y divide-gray-200">
                 {page.map((row, i) => {
                 prepareRow(row);
                 return (
@@ -79,8 +69,8 @@ function Table({ columns, data }) {
                     })}
                     </tr>
                 );
-                })}
-            </tbody>
+                }) }
+            </tbody> }
             </table> 
            </div>
          </div>

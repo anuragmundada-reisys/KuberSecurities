@@ -7,11 +7,21 @@ const formElement = (props) => {
     let inputElement = null;
 
     switch(props.elementType){
+        case 'autocompleteInput':
+             inputElement = <input
+                 className={classes.InputElement}
+                 type='text'
+                 label={props.label}
+                 placeholder={props.placeholder}
+                value={props.value}
+                onChange={props.changed}
+               />
+                break;
         case 'input':
             inputElement = <input  
             className={classes.InputElement} 
             {...props.elementConfig} 
-            value={props.value} 
+            value={props.value}
             onChange={props.changed}/>
             break;
         case 'select':
@@ -25,8 +35,8 @@ const formElement = (props) => {
             </select>
             break;
         case 'datePicker' :
-            inputElement = <DatePicker className={classes.InputElement} selected={props.value} 
-            onChange={props.changed} {...props.elementConfig} placeholderText={props.elementConfig.placeholder}/>
+            inputElement = <DatePicker className={classes.InputElement} selected={props.value} popperPlacement={'left-start'}
+            onChange={props.changed} {...props.elementConfig} placeholderText={props.elementConfig.placeholder} dateFormat={'yyyy-MM-dd'}/>
             break;
         default:
             break;

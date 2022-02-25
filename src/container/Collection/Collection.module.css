@@ -1,0 +1,52 @@
+
+.ActionItems {
+    display: flex;
+    justify-content: space-around;
+}
+.ViewDetails,
+.ReceivedPayment{
+    display: inline-flex;
+    font-size: small;
+    margin-top: 4px;
+}
+
+.ViewDetails:hover,
+.ReceivedPayment:hover{
+    color: #5e1d8a;
+    border-bottom: 1px solid #5e1d8a;
+    cursor: pointer;
+}
+
+.ViewDetailsIcon,
+.addMoreIcon{
+    margin: 2px 0 0 2px;
+}
+
+
+.Button {
+    background-color: transparent;
+    color: white;
+    outline: none;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    margin-right: 6px;
+    width: 100px;
+    padding: 4px 8px;
+}
+
+.Success {
+    color: #5e1d8a;
+    border: 1px solid #5e1d8a;
+    border-radius: 5px;
+}
+
+.Danger {
+    color: #944317;
+    border: 1px solid #944317;
+    border-radius: 5px;
+}
+
+.Button:hover {
+    background-color: #eeeeee;
+}

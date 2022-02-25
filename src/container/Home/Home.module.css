@@ -1,34 +1,9 @@
-.Home{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-evenly;
-    margin-left: 40px;
+.PlayerWrapper {
+    margin: 10em 14em;
+    width: auto;
+    height: auto;
 }
 
-.PieChart {
-    width: 300px;
-    height: 300px;
-    box-shadow: 1px 2px 2px 3px #ccc;
-    padding: 8px 4px;
-    box-sizing: border-box;
-    margin: 70px 20px 0 10px;
-    z-index: 30; 
-}
-
-@media(max-width: 500px){
-    .Home{
-        margin: 80px 0 0 150px;
-        display: flex;
-        flex-direction: column;
-    }
-}
-
-@media(max-width: 700px){
-    .Home{
-        margin: 80px 0 0 150px;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
+.ReactPlayer {
+    position: fixed;
 }

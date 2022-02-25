@@ -5,6 +5,9 @@ import classes from './Inventory.module.css';
 import { addInventory } from '../../redux/action/InventoryAction';
 import { getMasterData } from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
+import {ToastsContainer, ToastsStore} from "react-toasts";
+import {ADDED_ITEMS_TO_INVENTORY, RECEIVED_AMOUNT_ADDED_SUCCESSFULLY} from "../../common/Utils";
+import {ToastContainer} from "react-toastify";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -48,10 +51,10 @@ class ConnectedInventory extends Component {
 
   async componentDidMount(){
       
-       await this.props.getMasterData();
+       await this.props.getMasterData().catch(error=> ToastsStore.error(error, 2000));
         const productTypeOptions =[];
 
-        this.props.masterData.productType.map(product => {
+      this.props.masterData.productType && this.props.masterData.productType.map(product => {
             return productTypeOptions.push({
                  id: product.key,
                  displayValue: product.value
@@ -81,9 +84,14 @@ class ConnectedInventory extends Component {
                 formData[key] = this.state.inventoryForm[key].value
             }
         }
-        this.props.addInventory(formData);
-        alert('form submitted!')
-        this.props.navigate('/inventory', {replace:true});
+        this.props.addInventory(formData).then(()=>{
+            ToastsStore.success(ADDED_ITEMS_TO_INVENTORY, 1500);
+            setTimeout(() => {
+                this.props.navigate('/inventory', {replace:true});
+            }, 500)
+        }).catch(error=> ToastsStore.error(error, 2000));
+
+
     }
 
     inputChangeHandler = (event, keyIdentifier) => {
@@ -100,7 +108,6 @@ class ConnectedInventory extends Component {
 
     cancelHandler = () => {
         this.props.navigate('/inventory', {replace:true});
-        alert('Cancel!!')
     }
 
     render() {
@@ -112,6 +119,8 @@ class ConnectedInventory extends Component {
             })
         }
         return(
+            <>
+            <ToastsContainer position='top_center' store={ToastsStore} />
             <div className={classes.Inventory}>
                 <h4 className={classes.Title}>Enter Production Details</h4>
                 <form>
@@ -126,6 +135,7 @@ class ConnectedInventory extends Component {
                     <Button btnType='Danger' clicked={this.cancelHandler}> CANCEL </Button>
                 </form>
             </div>
+            </>
         )
     }
 }

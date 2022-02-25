@@ -1,10 +1,19 @@
-import { ADD_RAW_MATERIAL_PURCHASE, 
-    GET_MASTER_DATA, 
-    GET_RAW_MATERIAL_PURCHASE, 
-    GET_ALL_ORDERS, ADD_ORDER, 
-    GET_INVENTORY_DATA, 
+import {
+    ADD_RAW_MATERIAL_PURCHASE,
+    GET_MASTER_DATA,
+    GET_RAW_MATERIAL_PURCHASE,
+    GET_ALL_ORDERS, ADD_ORDER,
+    GET_INVENTORY_DATA,
     ADD_INVENTORY,
-    GET_COUNT } from '../constant/ActionType';
+    GET_COUNT,
+    GET_CUSTOMER_NAMES, RECEIVED_PAYMENTS,
+    GET_RECEIVER_NAMES,
+    GET_PAYMENT_METRICS, GET_AVAILABLE_STOCK,
+    GET_ORDER_ASSIGNEE_HISTORY,
+    GET_BILL_NUMBERS,
+    GET_COLLECTION_SEARCHED_ORDERS,
+    INVENTORY_SEARCH,
+} from '../constant/ActionType';
 
 const initialState = {
     masterData: {
@@ -17,7 +26,19 @@ const initialState = {
     order:{},
     inventoryData: [],
     inventory:{},
-    count: [],
+    count: {
+        payment:[],
+        orders:[]
+    },
+    customerNames: [],
+    receivedPayments:[],
+    receiverNames:[],
+    paymentMetrics: [],
+    availableStock: [],
+    assigneeHistory: [],
+    billNumbers:[],
+    collectionSearchedOrders: [],
+    searchedInventory: []
   };
   
   function rootReducer(state = initialState, action) {
@@ -54,6 +75,42 @@ const initialState = {
                   return {
                        ...state, count: action.payload
                  }
+           case GET_CUSTOMER_NAMES:
+             return {
+                 ...state, customerNames: action.payload
+             }
+           case RECEIVED_PAYMENTS:
+             return {
+                 ...state, receivedPayments: action.payload
+             }
+          case GET_RECEIVER_NAMES:
+             return {
+                 ...state, receiverNames: action.payload
+             }
+          case GET_PAYMENT_METRICS:
+             return {
+                 ...state, paymentMetrics: action.payload
+             }
+         case GET_AVAILABLE_STOCK:
+             return {
+                 ...state, availableStock: action.payload
+             }
+         case GET_ORDER_ASSIGNEE_HISTORY:
+             return {
+                 ...state, assigneeHistory: action.payload
+             }
+         case GET_BILL_NUMBERS:
+             return {
+                 ...state, billNumbers: action.payload
+             }
+         case GET_COLLECTION_SEARCHED_ORDERS:
+             return {
+                 ...state, collectionSearchedOrders: action.payload
+             }
+         case INVENTORY_SEARCH:
+             return {
+                 ...state, searchedInventory: action.payload
+             }
           default:
               return state;
      }

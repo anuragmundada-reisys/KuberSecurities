@@ -1,6 +1,7 @@
 .AddOrder{
     display: flex;
     justify-content: flex-start;
+    margin-top: 10px;
 }
 
 .Text {
@@ -11,16 +12,18 @@
     display: flex;
     justify-content: space-around;
 }
-
+.ReceivedPayment,
 .ViewDetails{
     display: inline-flex;
     font-size: small;
 }
+.ReceivedPayment:hover,
 .ViewDetails:hover{
     color: #5e1d8a;
     border-bottom: 1px solid #5e1d8a;
 }
 
+.addMoreIcon,
 .ViewDetailsIcon{
     margin: 2px 0 0 2px;
 }

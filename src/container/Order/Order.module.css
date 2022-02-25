@@ -10,6 +10,7 @@
     flex-direction: column;
 }
 
+.ReceivedPayment,
 .EditOrder {
     margin: 10px auto;
     width:auto;
@@ -24,10 +25,11 @@
     position: relative;
 }
 
-.addMoreOrder {
+.ReceivedPaymentTitle,
+.AddMoreOrderTitle {
     display: flex;
     flex-direction: row;
-    margin-bottom: 10px;
+    margin: 10px 0;
     font-weight: 600;
     color: #5e1d8a;
     justify-content: center;

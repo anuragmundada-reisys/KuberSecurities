@@ -2,11 +2,12 @@ import React from 'react';
 import NavigationItem from '../NavigationItem/NavigationItem';
 import classes from './NavigationItems.module.css';
 const navigationItems = () => (
-    <ul className={classes.NaviagtionItems}>
-        <NavigationItem link='/' exact={true} activeClassName="active" >HOME</NavigationItem>
-        <NavigationItem link='/raw-material/purchase' exact={true} activeClassName="active" >PURCHASE</NavigationItem>
-        <NavigationItem link='/inventory' exact={true} activeClassName="active">INVENTORY</NavigationItem>
-        <NavigationItem link='/order' exact={true} activeClassName="active">ORDERS</NavigationItem>
+    <ul className={classes.NavigationItems}>
+        <NavigationItem link='/' exact={true}>HOME</NavigationItem>
+        <NavigationItem link='/dashboard' exact={true}>DASHBOARD</NavigationItem>
+        <NavigationItem link='/inventory' exact={true}>INVENTORY</NavigationItem>
+        <NavigationItem link='/order' exact={true}>ORDERS</NavigationItem>
+        <NavigationItem link='/collection' exact={true}>COLLECTION</NavigationItem>
     </ul>
 )
 
