@@ -1,0 +1,18 @@
+.Footer {
+    margin-top: 1em;
+    display: inline-flex;
+    justify-content: center;
+    height: 3em;
+    border-top: 1px solid #5e1d8a;
+    width: 100%;
+    color: #5e1d8a;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    overflow-x: hidden;
+    background-color: #eee;
+}
+
+.Copyright{
+ margin-top: 3px;
+}

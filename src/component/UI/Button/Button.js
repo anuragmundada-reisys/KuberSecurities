@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './Button.module.css';
 
-const button = (props) => {
+const Button = (props) => {
     const buttonClass = [classes.Button, classes[props.btnType]];
     if(props.disabled){
         buttonClass.push(classes.Disabled)
@@ -11,4 +11,4 @@ const button = (props) => {
     )
 }
 
-export default button;
+export default Button;

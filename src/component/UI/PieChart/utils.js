@@ -22,7 +22,7 @@ export const OPTIONS = {
             fontSize: 30,
         },
         tooltip: {
-            enabled: false
+            enabled: true
         },
         title: {
             display: true,

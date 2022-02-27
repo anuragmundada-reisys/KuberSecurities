@@ -1,8 +1,7 @@
-.Home{
+.Dashboard{
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    justify-content: space-evenly;
     margin-left: 40px;
     align-items: center;
 }

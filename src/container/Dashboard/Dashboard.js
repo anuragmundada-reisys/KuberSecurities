@@ -7,6 +7,8 @@ import { connect} from 'react-redux';
 import {cloneDeep} from "lodash";
 import 'chartjs-plugin-datalabels';
 import DatePicker from "react-datepicker";
+import {ToastsContainer, ToastsStore} from "react-toasts";
+import {isValidInput, SELECT_DATE_DASHBOARD} from "../../common/Utils";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -17,11 +19,12 @@ function mapDispatchToProps(dispatch) {
 
 class ConnectedHome extends Component{
     state = {
-      date: ''
+      date: '',
     }
 
     componentDidMount() {
-        this.props.getAvailableStock();
+        this.props.getAvailableStock()
+            .catch(error=> ToastsStore.error(error, 2000));
     }
 
     inputChangeHandler = (event) => {
@@ -30,11 +33,15 @@ class ConnectedHome extends Component{
     }
 
     getDataHandler =  () => {
-       this.props.getMetrics(this.state.date);
+        let valid = isValidInput(this.state.date)
+        if(!valid){
+            ToastsStore.error(SELECT_DATE_DASHBOARD, 2000)
+        }else{
+            this.props.getMetrics(this.state.date)
+                .catch(error=> ToastsStore.error(error, 2000));
+        }
     }
     render(){
-
-        let date = this.state.date;
 
         let paymentMetricsData = cloneDeep(DATA);
         let paymentMetricsOptions = cloneDeep(OPTIONS);
@@ -70,7 +77,8 @@ class ConnectedHome extends Component{
         availableStockOptions.plugins.title.text = 'Available Stock';
 
       return(
-        <div className={classes.Home}>
+        <div className={classes.Dashboard}>
+            <ToastsContainer position='top_center' store={ToastsStore}/>
             <div className={classes.Wrapper}>
                 <p className={classes.Title}>Payment and Order Metrics</p>
                 <div className={classes.PaymentPieChart}>

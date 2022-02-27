@@ -6,8 +6,9 @@ import { addInventory } from '../../redux/action/InventoryAction';
 import { getMasterData } from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
 import {ToastsContainer, ToastsStore} from "react-toasts";
-import {ADDED_ITEMS_TO_INVENTORY, RECEIVED_AMOUNT_ADDED_SUCCESSFULLY} from "../../common/Utils";
-import {ToastContainer} from "react-toastify";
+import {ADDED_ITEMS_TO_INVENTORY, isValidInput} from "../../common/Utils";
+import {GoDiffAdded} from "react-icons/go";
+import {CgCloseO} from "react-icons/cg";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -41,18 +42,23 @@ class ConnectedInventory extends Component {
                 elementType: 'datePicker',
                 elementConfig: {
                     name: 'startDate',
-                    placeholder: 'Select Ordered Date',
+                    placeholder: 'Select Date',
                 },
                 value: '',
                 label: 'Production Date'
             },
         },
+        inventoryError: false,
+        productDetails: [],
+        addProduct: false,
+        inventoryAddDisabled: true,
+        productReceivedDate: '',
     }
 
   async componentDidMount(){
       
        await this.props.getMasterData().catch(error=> ToastsStore.error(error, 2000));
-        const productTypeOptions =[];
+       const productTypeOptions =[];
 
       this.props.masterData.productType && this.props.masterData.productType.map(product => {
             return productTypeOptions.push({
@@ -74,36 +80,77 @@ class ConnectedInventory extends Component {
     addInventoryHandler = (event) => {
         event.preventDefault();
 
-        const integerConvertibleKeys = ['productId', 'quantity'];
+        let valid = true;
+         const formData = {
+             productReceivedDate: this.state.productReceivedDate,
+             products: this.state.productDetails
+         };
 
-         const formData = {};
-        for(let key in this.state.inventoryForm){
-            if(integerConvertibleKeys.includes(key)){
-                formData[key] = parseInt(this.state.inventoryForm[key].value)
-            }else{
-                formData[key] = this.state.inventoryForm[key].value
-            }
-        }
-        this.props.addInventory(formData).then(()=>{
-            ToastsStore.success(ADDED_ITEMS_TO_INVENTORY, 1500);
-            setTimeout(() => {
-                this.props.navigate('/inventory', {replace:true});
-            }, 500)
-        }).catch(error=> ToastsStore.error(error, 2000));
-
-
+         if(formData.products.length === 0){
+             ToastsStore.error('Please add received Products', 2000)
+         }else{
+             for(let key in formData){
+                 if(key === 'productReceivedDate')
+                     valid = isValidInput(formData[key])
+                 if(key==='products') {
+                     formData[key].length !==0 && formData[key].map((product)=>{
+                         for(let element in product){
+                             valid = isValidInput(product[element])
+                             if(!valid){
+                                 return;
+                             }
+                         }
+                     })
+                 }
+                 if(!valid){
+                     this.setState({inventoryError: true})
+                     return;
+                 }
+             }
+             valid &&
+             this.props.addInventory(formData).then(()=>{
+                 ToastsStore.success(ADDED_ITEMS_TO_INVENTORY, 1500);
+                 setTimeout(() => {
+                     this.props.navigate('/inventory', {replace:true});
+                 }, 500)
+             }).catch(error=> ToastsStore.error(error, 2000));
+         }
     }
 
-    inputChangeHandler = (event, keyIdentifier) => {
-        const updatedInventoryForm = {...this.state.inventoryForm}
-        const updatedElement = { ...updatedInventoryForm[keyIdentifier]}
-        if(keyIdentifier === 'productionDate'){
-             updatedElement.value = event;
-        }else{
-            updatedElement.value = event.target.value;
-        }
-        updatedInventoryForm[keyIdentifier] = updatedElement;
-        this.setState({inventoryForm: updatedInventoryForm})
+    addProductHandler = () => {
+        let newProductDetails= [...this.state.productDetails, {
+            inventoryId: Math.random(),
+            productId: '',
+            quantity: ''
+        }]
+        this.setState({productDetails: newProductDetails,
+            addProduct: true,
+            inventoryAddDisabled: false}
+        )
+    }
+
+    productInputChangeHandler = (id, key ,event) => {
+        const updatedProduct = this.state.productDetails.map(product => {
+            if(id === product.inventoryId) {
+                product[key] = parseInt(event.target.value);
+            }
+            return product;
+        })
+
+        this.setState({productDetails: updatedProduct, inventoryError: false })
+    }
+
+
+    inputChangeHandler = (event) => {
+        let receivedDate = event
+        this.setState({productReceivedDate: receivedDate, inventoryError: false})
+    }
+
+    removeProductHandler = (inventoryId) => {
+        let updatedProductDetails =  [...this.state.productDetails];
+        let index = updatedProductDetails.findIndex(product  => product.inventoryId === inventoryId)
+        updatedProductDetails.splice(index, 1);
+        this.setState({productDetails: updatedProductDetails })
     }
 
     cancelHandler = () => {
@@ -111,32 +158,52 @@ class ConnectedInventory extends Component {
     }
 
     render() {
-        const formElementArray = [];
-        for(let key in this.state.inventoryForm){
-            formElementArray.push({
-                id: key,
-                config: this.state.inventoryForm[key]
-            })
+        const productElementArray=[];
+        const productElement = ['productId', 'quantity'];
+        for (let key in this.state.inventoryForm ) {
+            if(productElement.includes(key)){
+                productElementArray.push({
+                    id: key,
+                    config: this.state.inventoryForm[key]
+                })
+            }
         }
-        return(
+        return (
             <>
-            <ToastsContainer position='top_center' store={ToastsStore} />
-            <div className={classes.Inventory}>
-                <h4 className={classes.Title}>Enter Production Details</h4>
-                <form>
-                    {formElementArray.map(formElement => (
-                        <Input elementType={formElement.config.elementType}
-                         elementConfig={formElement.config.elementConfig} 
-                         value={formElement.config.value}
-                         label={formElement.config.label}
-                         changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
-                    ) )}
-                    <Button btnType='Success' clicked={this.addInventoryHandler}> ADD </Button>
-                    <Button btnType='Danger' clicked={this.cancelHandler}> CANCEL </Button>
-                </form>
-            </div>
-            </>
-        )
+                <ToastsContainer position='top_center' store={ToastsStore}/>
+                <div className={classes.Inventory}>
+                    <h4 className={classes.Title}>Enter Production Details</h4>
+                    <form>
+                        <div className={classes.AddProductsTitle}>
+                            <p> Add Products to Inventory?</p>
+                            <GoDiffAdded className={classes.AddMoreProductButton} onClick={this.addProductHandler}/>
+                        </div>
+                        {this.state.productDetails.map((product) => (
+                            <div className={classes.MoreProductElement} key={product.inventoryId}>
+                                {productElementArray.map(ele => (
+                                    <Input elementType={ele.config.elementType}
+                                           elementConfig={ele.config.elementConfig}
+                                           value={product[ele.id]}
+                                           label={ele.config.label}
+                                           changed={(event) => this.productInputChangeHandler(product.inventoryId, ele.id, event)}
+                                    />
+                                ))}
+                                <CgCloseO onClick={()=>this.removeProductHandler(product.inventoryId)} className={classes.CloseIcon}/>
+                            </div>))}
+                        <Input elementType={'datePicker'}
+                               elementConfig={{name: 'Product Received Date', placeholder: 'Select Product Received Date'}}
+                               value={this.state.productReceivedDate}
+                               label={'Product Received Date'}
+                               changed={(event) => this.inputChangeHandler( event)}
+                        />
+                        {this.state.inventoryError &&
+                          <p className={classes.ErrorMessage}> All fields are required! </p>}
+                        <Button btnType='Success' disabled={this.state.inventoryAddDisabled} clicked={this.addInventoryHandler}> ADD </Button>
+                        <Button btnType='Danger' clicked={this.cancelHandler}> CANCEL </Button>
+
+                    </form>
+                </div>
+            </>)
     }
 }
 

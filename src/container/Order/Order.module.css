@@ -39,11 +39,12 @@
     margin-top: 50px;
     width: 100px;
 }
-.addMoreOrderButton {
+.AddMoreOrderButton {
     margin: 3px  0  0 4px;
 }
 
-.moreOrderElement {
+.MorePaymentElement,
+.MoreOrderElement {
     display: flex;
     justify-content: space-between;
     box-sizing: border-box;
@@ -64,6 +65,11 @@
 
 .Input {
     display: block;
+}
+
+.ErrorMessage {
+    font-size: 16px;
+    color: red;
 }
 
 @media (max-width: 600px) {

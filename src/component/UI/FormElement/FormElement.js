@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import classes from './FormElement.module.css';
 
-const formElement = (props) => {
+const FormElement = (props) => {
     let inputElement = null;
 
     switch(props.elementType){
@@ -45,9 +45,9 @@ const formElement = (props) => {
         <div className={classes.Input}>
             <label className={classes.Label} >{props.label}</label>
             {inputElement}
+            {props.error && <span className={classes.ErrorMessage}>{props.errorMessage}</span>}
         </div>
     )
-
 }
 
-export default formElement;
+export default FormElement;

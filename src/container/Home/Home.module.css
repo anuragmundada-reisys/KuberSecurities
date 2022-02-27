@@ -1,9 +1,9 @@
-.PlayerWrapper {
-    margin: 10em 14em;
-    width: auto;
-    height: auto;
-}
+
 
 .ReactPlayer {
-    position: fixed;
+    position: absolute;
+    margin-top: 72px;
+    left: 10%;
 }
+
+

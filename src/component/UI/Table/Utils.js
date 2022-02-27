@@ -1,54 +1,16 @@
-import {SelectAssignedStatusFilter, SelectColumnFilter} from './ColumnFilter';
 
 export function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
 
-export const RAW_MATERIAL_COLUMNS =  [
-  {
-     Header: "Raw Material",
-     accessor: "rawMaterialName",
-     Filter: SelectColumnFilter, 
-     filter: 'includes',
-   },
-   {
-     Header: "Product Type",
-     accessor: "productType",
-     Filter: SelectColumnFilter, 
-     filter: 'includes',
-   },
-   {
-     Header: "Quantity",
-     accessor: "quantity",
-   },
-   {
-     Header: "Status",
-     accessor: "status",
-     Cell: ({ row: { original } }) => {
-         return original.status === true ? 'Completed' : 'Pending';
-     },
-   },
-   {
-     Header: "Purchase Date",
-     accessor: "purchaseDate",
-     Filter: SelectColumnFilter, 
-     filter: 'includes',
-   },
-]
-
-
 export const ORDER_LIST_COLUMNS =  [
     {
         Header: "Bill Number",
-        accessor: "billNo",
-        Filter: SelectColumnFilter,
-        filter: 'includes',
+        accessor: "billNo"
     },
   {
      Header: "Customer Name",
      accessor: "customerName",
-     Filter: SelectColumnFilter, 
-     filter: 'includes',
    },
     {
         Header: "Total Amount",
@@ -69,8 +31,6 @@ export const ORDER_LIST_COLUMNS =  [
    {
      Header: "Order Date",
      accessor: "orderDate",
-     Filter: SelectColumnFilter, 
-     filter: 'includes',
    },
   
 ]
@@ -125,8 +85,6 @@ export const INVENTORY_LIST_COLUMNS =  [
    {
      Header: "Product Type",
      accessor: "productType",
-     Filter: SelectColumnFilter, 
-     filter: 'includes',
    },
    {
      Header: "Quantity",
@@ -135,7 +93,5 @@ export const INVENTORY_LIST_COLUMNS =  [
    {
      Header: "Production Date",
      accessor: "productionDate",
-     Filter: SelectColumnFilter, 
-     filter: 'includes',
    },
 ]

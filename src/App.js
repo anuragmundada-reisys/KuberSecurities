@@ -1,8 +1,6 @@
 import './App.css';
 import Layout from './component/Layout/Layout';
-import { Routes, Route, useNavigate, useLocation} from 'react-router-dom';
-import RawMaterialPurchaseList from './container/RawMaterialPurchase/RawMaterialPurchaseList';
-import RawMaterialPurchase from './container/RawMaterialPurchase/RawMaterialPurchase';
+import { Routes, Route, useNavigate} from 'react-router-dom';
 import OrderList from './container/Order/OrderList';
 import Order from './container/Order/Order';
 import InventoryList from './container/Inventory/InventoryList';
@@ -13,7 +11,6 @@ import Collection from "./container/Collection/Collection";
 
 function App() {
   const navigate = useNavigate();
-  const location =useLocation();
   return (
     <div className="App">
       <Layout>

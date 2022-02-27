@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import classes from '../RawMaterialSummary/TableSummary.module.css';
+import classes from './TableSummary.module.css';
 import {getOrderAssigneeHistory, getReceivedPayment} from "../../redux/action/OrderAction";
 import {ToastsStore} from "react-toasts";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { useTable, useGlobalFilter, useFilters, useSortBy, usePagination } from "react-table";
+import { useTable, useSortBy, usePagination } from "react-table";
 import Pagination from "./Pagination";
 
 function Table({ columns, data, dataFound }) {
@@ -24,8 +24,7 @@ function Table({ columns, data, dataFound }) {
       data,
 
     },
-    useFilters,
-    useGlobalFilter,
+
     useSortBy,
     usePagination);
 

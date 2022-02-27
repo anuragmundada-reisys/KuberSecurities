@@ -12,6 +12,7 @@
     color: #5e1d8a;
 }
 
+
 .InputElement {
     border: 1px solid #5a4c63;
     background-color: white;
@@ -36,3 +37,11 @@ select:invalid{
     color: grey;
 }
 
+.ErrorMessage {
+    color: red;
+    font-size: 16px;
+}
+
+.input :invalid{
+    border: 1px solid red;
+}

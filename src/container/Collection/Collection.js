@@ -40,7 +40,6 @@ class ConnectedCollection extends Component {
             updatedOrders = filteredOrders;
             this.setState({pendingOrders: updatedOrders, dataFound: true})
         }).catch(error=> ToastsStore.error(error, 2000));;
-
     }
 
     assignOrderHandler = (rowData) => {
