@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import Input from "../../component/UI/FormElement/FormElement";
-import classes from './InventorySearch.module.css';
+import classes from './InventoryFilter.module.css';
 import {getMasterData} from "../../redux/action/MasterDataAction";
 import {connect} from "react-redux";
 import Button from "../../component/UI/Button/Button";
 import DatePicker from "react-datepicker";
-import {ToastsStore} from "react-toasts";
+import {ToastsContainer, ToastsStore} from "react-toasts";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -22,6 +22,7 @@ class ConnectedInventorySearch extends  Component {
 
     async  componentDidMount() {
         await this.props.getMasterData()
+            .catch(error=> ToastsStore.error(error, 2000));
         let updatedProductTypeOptions = [...this.state.productTypeOptions]
         this.props.masterData.productType.map(product => {
             return updatedProductTypeOptions.push({
@@ -33,7 +34,6 @@ class ConnectedInventorySearch extends  Component {
     }
 
     inputChangeHandler = (event, keyIdentifier) => {
-
          if(keyIdentifier === 'ProductionDate'){
             const userInput = event;
             this.setState({productionDate: userInput})
@@ -46,7 +46,8 @@ class ConnectedInventorySearch extends  Component {
     render(){
         return(
             <>
-                <div className={classes.InventorySearch}>
+                <div className={classes.InventoryFilter}>
+                    <ToastsContainer position='top_center' store={ToastsStore} />
                     <Input elementType={'select'}
                            elementConfig={{options: this.state.productTypeOptions , placeholder: 'Search Product type'}}
                            value={this.state.productType}
@@ -79,9 +80,9 @@ function mapStateToProps(state) {
     };
 }
 
-const InventorySearch = connect(
+const InventoryFilter = connect(
     mapStateToProps,
     mapDispatchToProps
 )(ConnectedInventorySearch)
 
-export default InventorySearch;
+export default InventoryFilter;

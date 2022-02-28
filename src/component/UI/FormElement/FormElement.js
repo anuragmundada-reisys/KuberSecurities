@@ -45,7 +45,6 @@ const FormElement = (props) => {
         <div className={classes.Input}>
             <label className={classes.Label} >{props.label}</label>
             {inputElement}
-            {props.error && <span className={classes.ErrorMessage}>{props.errorMessage}</span>}
         </div>
     )
 }

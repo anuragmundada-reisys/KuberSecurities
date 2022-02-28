@@ -10,15 +10,13 @@ import { BsBoxArrowUpRight } from 'react-icons/bs';
 import Modal from '../../component/UI/Modal/Modal';
 import Order from './Order';
 import OrderDetails from './OrderDetails';
-import CollectionFilter from "../Collection/CollectionFilter";
-import {getCollectionSearchedOrders} from "../../redux/action/CollectionAction";
+import OrderAndCollectionFilter from "../../component/UI/Table/OrderAndCollectionFilter";
 import {ToastsContainer, ToastsStore} from "react-toasts";
 import {DATA_NOT_FOUND} from "../../common/Utils";
 
 function mapDispatchToProps(dispatch) {
     return {
-        getAllOrders: ()=> dispatch(getAllOrders()),
-        getCollectionSearchedOrders: (params) => dispatch(getCollectionSearchedOrders(params))
+        getAllOrders: (params)=> dispatch(getAllOrders(params)),
     };
 }
 
@@ -28,13 +26,12 @@ class ConnectedOrderList extends Component {
       rowData: {},
       viewOrderDetails: false,
       receivedPayment: false,
-      searchOrder: false,
       dataFound: true,
-      searchedOrders: []
+      orders:[]
     }
     componentDidMount() {
       this.props.getAllOrders()
-       .then()
+       .then(()=>{this.setState({orders: this.props.orderList})})
        .catch(error=> ToastsStore.error(error, 2000));
     }
 
@@ -57,22 +54,27 @@ class ConnectedOrderList extends Component {
     }
 
     searchOrderHandler = async (params) => {
-        let updatedSearchedOrders = [...this.state.searchedOrders]
-        await this.props.getCollectionSearchedOrders(params).then(()=>{
-            if(this.props.collectionSearchedOrders.length === 0){
+        let updatedSearchedOrders = [...this.state.orders]
+        await this.props.getAllOrders(params).then(()=>{
+            if(this.props.orderList.length === 0){
                 ToastsStore.error(DATA_NOT_FOUND, 2000);
-                this.setState({dataFound: false})
+                this.setState({orders: this.props.orderList, dataFound: false})
             }
             else if(params.orderStatus !== ''){
                 JSON.parse(params.orderStatus) ?
-                    updatedSearchedOrders = this.props.collectionSearchedOrders.filter(order => order.balanceDue === 0 ):
-                    updatedSearchedOrders = this.props.collectionSearchedOrders.filter(order => order.balanceDue !== 0 )
-                this.setState({searchedOrders: updatedSearchedOrders, searchOrder: true, dataFound:true});
+                    updatedSearchedOrders = this.props.orderList.filter(order => order.balanceDue === 0 ):
+                    updatedSearchedOrders = this.props.orderList.filter(order => order.balanceDue !== 0 )
+               if(updatedSearchedOrders.length !== 0 ) {
+                   this.setState({orders: updatedSearchedOrders, dataFound:true})
+               }else{
+                   ToastsStore.error(DATA_NOT_FOUND, 2000);
+                   this.setState({orders: updatedSearchedOrders, dataFound:false})
+               }
              }
             else{
-                this.setState({searchOrder: true, dataFound:true, searchedOrders: this.props.collectionSearchedOrders });
+                this.setState({ orders: this.props.orderList, dataFound:true });
             }
-        }).catch(error=> ToastsStore.error(error, 2000));;
+        }).catch(error=> ToastsStore.error(error, 2000));
 
     }
 
@@ -81,7 +83,6 @@ class ConnectedOrderList extends Component {
     }
    
     render(){
-        const data = this.state.searchOrder ? this.state.searchedOrders :this.props.orderList;
         return(
        <>
         <ToastsContainer position='top_center' store={ToastsStore} />
@@ -100,7 +101,7 @@ class ConnectedOrderList extends Component {
                <Button btnType='Success' clicked={this.addOrderHandler}> ADD </Button>
               </div>
               <div className="mt-4">
-                <CollectionFilter clicked={(params)=>this.searchOrderHandler(params)} clearClicked={this.clearSearchHandler} isOrderSearch={true}/>
+                <OrderAndCollectionFilter clicked={(params)=>this.searchOrderHandler(params)} clearClicked={this.clearSearchHandler} isOrderSearch={true}/>
                 <Table columns={[...ORDER_LIST_COLUMNS, 
                  {
                   Header: "Actions",
@@ -118,7 +119,7 @@ class ConnectedOrderList extends Component {
                               </div>
                           );
                   },
-                }]} data={data}  dataFound={this.state.dataFound}/>
+                }]} data={this.state.orders}  dataFound={this.state.dataFound}/>
               </div>
               </>
            </main>

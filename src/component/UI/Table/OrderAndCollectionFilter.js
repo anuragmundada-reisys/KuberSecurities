@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Input from "../../component/UI/FormElement/FormElement";
-import InputSuggestionList from "../../component/UI/FormElement/InputSuggestionList";
-import classes from './CollectionFilter.module.css';
-import {getBillNumbers, getCustomerNames, getReceiverNames} from "../../redux/action/MasterDataAction";
+import Input from "../FormElement/FormElement";
+import InputSuggestionList from "../FormElement/InputSuggestionList";
+import classes from './OrderAndCollectionFilter.module.css';
+import {getBillNumbers, getCustomerNames, getReceiverNames} from "../../../redux/action/MasterDataAction";
 import {connect} from "react-redux";
-import Button from "../../component/UI/Button/Button";
+import Button from "../Button/Button";
 import DatePicker from "react-datepicker";
 
 function mapDispatchToProps(dispatch) {
@@ -38,7 +38,7 @@ class ConnectedCollectionFilter extends  Component {
 
   async  componentDidMount() {
         document.addEventListener("click", (event)=>this.handleOuterClick(event));
-        await this.props.getBillNumbers();
+        await this.props.getBillNumbers()
         await this.props.getCustomerNames();
         await this.props.getReceiverNames();
         this.setState({billNoSuggestions: this.props.billNumbers,
@@ -209,9 +209,9 @@ function mapStateToProps(state) {
     };
 }
 
-const CollectionFilter = connect(
+const OrderAndCollectionFilter = connect(
     mapStateToProps,
     mapDispatchToProps
 )(ConnectedCollectionFilter)
 
-export default CollectionFilter;
+export default OrderAndCollectionFilter;

@@ -11,8 +11,6 @@ import {
     GET_PAYMENT_METRICS, GET_AVAILABLE_STOCK,
     GET_ORDER_ASSIGNEE_HISTORY,
     GET_BILL_NUMBERS,
-    GET_COLLECTION_SEARCHED_ORDERS,
-    INVENTORY_SEARCH,
 } from '../constant/ActionType';
 
 const initialState = {
@@ -37,8 +35,6 @@ const initialState = {
     availableStock: [],
     assigneeHistory: [],
     billNumbers:[],
-    collectionSearchedOrders: [],
-    searchedInventory: []
   };
   
   function rootReducer(state = initialState, action) {
@@ -102,14 +98,6 @@ const initialState = {
          case GET_BILL_NUMBERS:
              return {
                  ...state, billNumbers: action.payload
-             }
-         case GET_COLLECTION_SEARCHED_ORDERS:
-             return {
-                 ...state, collectionSearchedOrders: action.payload
-             }
-         case INVENTORY_SEARCH:
-             return {
-                 ...state, searchedInventory: action.payload
              }
           default:
               return state;

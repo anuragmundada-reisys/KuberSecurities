@@ -9,16 +9,14 @@ import Modal from "../../component/UI/Modal/Modal";
 import Order from "../Order/Order";
 import {BsBoxArrowUpRight} from "react-icons/bs";
 import OrderDetails from "../Order/OrderDetails";
-import CollectionFilter from "./CollectionFilter";
-import {getCollectionSearchedOrders} from "../../redux/action/CollectionAction";
+import OrderAndCollectionFilter from "../../component/UI/Table/OrderAndCollectionFilter";
 import {ToastsContainer, ToastsStore} from "react-toasts";
 import {DATA_NOT_FOUND, ORDER_UNASSIGNED_SUCCESSFULLY} from "../../common/Utils";
 
 function mapDispatchToProps(dispatch) {
     return {
-        getAllOrders: ()=> dispatch(getAllOrders()),
+        getAllOrders: (params)=> dispatch(getAllOrders(params)),
         updateOrder: order => dispatch(updateOrder(order)),
-        getCollectionSearchedOrders: (params)=> dispatch(getCollectionSearchedOrders(params))
     };
 }
 
@@ -29,8 +27,6 @@ class ConnectedCollection extends Component {
         assign: false,
         pendingOrders: [],
         viewOrderDetails: false,
-        searchOrder: false,
-        searchedOrders: [],
         dataFound: true,
     }
     async componentDidMount() {
@@ -39,7 +35,7 @@ class ConnectedCollection extends Component {
             let updatedOrders = [...this.state.pendingOrders];
             updatedOrders = filteredOrders;
             this.setState({pendingOrders: updatedOrders, dataFound: true})
-        }).catch(error=> ToastsStore.error(error, 2000));;
+        }).catch(error=> ToastsStore.error(error, 2000));
     }
 
     assignOrderHandler = (rowData) => {
@@ -78,13 +74,13 @@ class ConnectedCollection extends Component {
     }
 
     searchOrderHandler = async (params) => {
-        await this.props.getCollectionSearchedOrders(params).then(()=>{
-            const filteredOrders = this.props.collectionSearchedOrders.filter(order => order.balanceDue !== 0);
+        await this.props.getAllOrders(params).then(()=>{
+            const filteredOrders = this.props.orderList.filter(order => order.balanceDue !== 0);
             if(filteredOrders.length === 0){
                 this.setState({dataFound: false})
                 ToastsStore.error(DATA_NOT_FOUND, 2000);
             }else{
-                this.setState({searchOrder: true, pendingOrders: filteredOrders, dataFound:true});
+                this.setState({ pendingOrders: filteredOrders, dataFound:true});
             }
         }).catch(error=> ToastsStore.error(error, 2000));
 
@@ -113,7 +109,7 @@ class ConnectedCollection extends Component {
                              null}
                         <div className="mt-4">
                             <ToastsContainer position='top_center' store={ToastsStore} />
-                            <CollectionFilter clicked={(params)=>this.searchOrderHandler(params)} clearClicked={this.clearSearchHandler}/>
+                            <OrderAndCollectionFilter clicked={(params)=>this.searchOrderHandler(params)} clearClicked={this.clearSearchHandler}/>
                             <Table columns={[...COLLECTION_ORDERS_COLUMNS,
                                 {
                                     Header: "Actions",
@@ -144,7 +140,6 @@ class ConnectedCollection extends Component {
 function mapStateToProps(state) {
     return {
         orderList: state.orderList,
-        collectionSearchedOrders: state.collectionSearchedOrders
     };
 }
 
@@ -152,7 +147,5 @@ const Collection = connect(
     mapStateToProps,
     mapDispatchToProps
 )(ConnectedCollection)
-
-
 
 export default Collection;

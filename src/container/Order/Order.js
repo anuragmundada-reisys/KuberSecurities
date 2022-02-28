@@ -8,13 +8,16 @@ import { connect } from 'react-redux';
 import { GoDiffAdded } from 'react-icons/go';
 import { CgCloseO } from 'react-icons/cg';
 import InputSuggestionList from "../../component/UI/FormElement/InputSuggestionList";
-
 import { ToastsContainer, ToastsStore } from 'react-toasts';
 import {
-    isValidInput,
-    ORDER_ASSIGNED_SUCCESSFULLY,
+    ALL_FIELDS_ARE_REQUIRED,
+    ASSIGN_ORDER,
+    ENTER_ORDER_DETAILS,
+    ENTER_PAYMENT_DETAILS,
+    isValidInput, ORDER_ADDED_SUCCESSFULLY,
+    ORDER_ASSIGNED_SUCCESSFULLY, ORDER_UPDATED_SUCCESSFULLY, PLEASE_ADD_ASSIGNEE_NAME,
     RECEIVED_AMOUNT_ADDED_SUCCESSFULLY,
-    RECEIVED_AMOUNT_GREATER_THAN_BALANCE_DUE
+    RECEIVED_AMOUNT_GREATER_THAN_BALANCE_DUE, UPDATE_ORDER_DETAILS
 } from "../../common/Utils";
 
 
@@ -140,11 +143,14 @@ class ConnectedOrder extends Component {
         receivedPaymentAddDisabled: true,
         receivedPaymentError: false,
         orderError: false,
+        updateOrderError: false,
     }
 
   async componentDidMount(){
       const productTypeOptions =[];
       let updatedSuggestions = [];
+
+      //Get master and assign Product_Type options
       await this.props.getMasterData()
            .then(()=>{
                this.props.masterData.productType.map(product => {
@@ -156,25 +162,31 @@ class ConnectedOrder extends Component {
            })
            .catch(error=> ToastsStore.error(error, 2000));
 
+       let updatedOrderForm = {...this.state.orderForm}
+
+       let updatedProductTypeElement = { ...updatedOrderForm.productId}
+       updatedProductTypeElement.elementConfig.options = productTypeOptions;
+       updatedOrderForm.productId = updatedProductTypeElement;
+
+        //Get existing customer names for suggestions
         await this.props.getCustomerNames().then(()=>{
             updatedSuggestions =  this.props.customerNames;
         }).catch(error=> ToastsStore.error(error, 2000));
 
-        let updatedOrderForm = {...this.state.orderForm}
-
-        let updatedProductTypeElement = { ...updatedOrderForm.productId}
-         updatedProductTypeElement.elementConfig.options = productTypeOptions;
-
-        let updatedQuantityElement = { ...updatedOrderForm.quantity}
-         updatedProductTypeElement.elementConfig.options = productTypeOptions;
+      // let updatedQuantityElement = { ...updatedOrderForm.quantity}
+       //  updatedProductTypeElement.elementConfig.options = productTypeOptions;
 
         let updatedOrders = [...this.state.orderDetails];
         let updatedTotalAmount = this.state.totalAmount;
         let updatedBalanceDue = this.state.balanceDue;
+
+        //If editing order, assign initial state of order details and total amount to row data
         if(this.props.isEditing){
             updatedOrders = [...this.props.rowData.orders];
             updatedTotalAmount = this.props.rowData.totalAmount;
         }
+
+        //Received Payment or bill is getting assigned to someone, get balance due and receiver names suggestions
         if(this.props.receivedPayment || this.props.isAssigning) {
             updatedBalanceDue = this.props.rowData.balanceDue;
             await this.props.getReceiverNames()
@@ -183,8 +195,7 @@ class ConnectedOrder extends Component {
                 })
                 .catch(error=> ToastsStore.error(error, 2000));;;
          }
-        updatedOrderForm.productId = updatedProductTypeElement;
-        updatedOrderForm.quantity = updatedQuantityElement;
+       // updatedOrderForm.quantity = updatedQuantityElement;
 
         this.setState({orderForm: updatedOrderForm, orderDetails: updatedOrders,
               totalAmount: updatedTotalAmount, suggestions: updatedSuggestions , balanceDue: updatedBalanceDue})
@@ -194,17 +205,19 @@ class ConnectedOrder extends Component {
         event.preventDefault();
         let valid = true;
 
-        const deleteKeys = ['productId', 'amount', 'rate', 'quantity', 'paymentMode', 'receivedAmount', 'receivedPaymentDate']
+        //adding keys from order form in state to form data
+        const orderFormKeys = ['billNo', 'orderDate']
         const formData = { }
         for(let key in this.state.orderForm){
-            formData[key] = this.state.orderForm[key].value
+            if(orderFormKeys.includes(key)){
+                formData[key] = this.state.orderForm[key].value
+            }
         }
         formData['orders'] = this.state.orderDetails;
         formData['totalAmount'] = this.state.totalAmount;
         formData['customerName'] = this.state.customerName;
-        for(let key of deleteKeys){
-            delete formData[key];
-        }
+
+        //validating order form keys
         for(let key in formData){
             if(key!=='orders'){
                 valid = isValidInput(formData[key])
@@ -215,6 +228,7 @@ class ConnectedOrder extends Component {
             }
         }
 
+        //validating orders in order form
         formData.orders.length !== 0 && formData.orders.forEach(order => {
           for(let key in order){
               valid = isValidInput(order[key])
@@ -224,60 +238,48 @@ class ConnectedOrder extends Component {
               }
           }
         })
+
         valid &&
         this.props.addOrder(formData).then(()=>{
-            ToastsStore.success('Order Added Successfully!', 1000);
+            ToastsStore.success(ORDER_ADDED_SUCCESSFULLY, 1000);
             setTimeout(() => {
                 this.props.navigate('/order', {replace:true});
                 }, 500)
          }).catch(error=> ToastsStore.error(error, 2000));
-
     }
 
     updateOrderHandler = (event) => {
+        let valid = true;
         event.preventDefault();
         let editFormData = {
-            orderId: this.props.rowData.orderId,
+            orderId: this.props.rowData && this.props.rowData.orderId,
             orders: [...this.state.orderDetails],
             totalAmount: this.state.totalAmount,
         };
 
+        //validating order
+        editFormData.orders.length !== 0 && editFormData.orders.forEach(order => {
+            for(let key in order){
+                valid = isValidInput(order[key])
+                if(!valid){
+                    this.setState({updateOrderError: true})
+                    return;
+                }
+            }
+        })
+        valid &&
         this.props.updateOrder(editFormData).then(()=>{
-            ToastsStore.success('Order Updated Successfully!', 1000);
+            ToastsStore.success(ORDER_UPDATED_SUCCESSFULLY, 1000);
             setTimeout(() => {
                 window.location.reload();
             }, 500)
         }).catch(error=> ToastsStore.error(error, 2000));
-
-    }
-
-    assignOrderHandler = async (event) => {
-        event.preventDefault();
-        let assignOrderFormData = {
-            assignUpdate: true,
-            orderId: this.props.rowData.orderId,
-            assigneeName: this.state.receiverName,
-            updatedDate: new Date(),
-            assignedStatus: this.props.isAssigning,
-        };
-        let valid = isValidInput(assignOrderFormData.assigneeName);
-        if(valid){
-            await this.props.updateOrder(assignOrderFormData).then(()=>{
-                ToastsStore.success(ORDER_ASSIGNED_SUCCESSFULLY, 500);
-                setTimeout(() => {
-                    window.location.reload();
-                }, 500)
-            }).catch(error=> ToastsStore.error(error, 2000));
-        }else{
-            this.setState({assigneeNameError: true})
-        }
-
-    }
+      }
 
     inputChangeHandler = (event, keyIdentifier) => {
+        //set customer name and suggestions
         if(keyIdentifier === 'customerName') {
             const userInput = event.target.value;
-
             const filtered = this.state.suggestions.filter(
                 (suggestion) =>
                     suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
@@ -296,17 +298,9 @@ class ConnectedOrder extends Component {
         }
     }
 
-    assigneeNameInputChangeHandler = (event) => {
-        const userInput = event.target.value;
-
-        const filtered = this.state.suggestions.filter(
-            (suggestion) =>
-                suggestion && suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
-        );
-        this.setState({receiverName: userInput, filteredSuggestions: filtered, showSuggestion: true, assigneeNameError: false})
-    }
-
+    //customer names and receiver names suggestion list on click
     onClick = (event, id) => {
+        //assigning clicked value from suggestions
         if(this.props.receivedPayment) {
             let updatedReceivedPaymentDetails = [...this.state.receivedPaymentDetails]
             updatedReceivedPaymentDetails.map(receivedPayment => {
@@ -322,26 +316,59 @@ class ConnectedOrder extends Component {
         }
     }
 
+    //adding multiple orders
     multiOrderInputChangeHandler = (id, key ,event) => {
-        let updatedTotalAmount = this.state.totalAmount;
-            const newOrders = this.state.orderDetails.map(i => {
-                if(id === i.orderDetailsId) {
-                    i[key] = parseInt(event.target.value);
-                    i['amount'] = i.rate * i.quantity;
+            const newOrders = this.state.orderDetails.map(order => {
+                if(id === order.orderDetailsId) {
+                    order[key] = parseInt(event.target.value);
+                    order['amount'] = order.rate * order.quantity;
                 }
-                return i;
+                return order;
             })
 
-            updatedTotalAmount =  newOrders.map(order=>order.amount).reduce((prevAmount, currAmount) => prevAmount + currAmount,0)
-            this.setState({orderDetails: newOrders, totalAmount: updatedTotalAmount, orderError: false })
+            //calculating total amount of all product types in order
+            let updatedTotalAmount =  newOrders.map(order=>order.amount).reduce((prevAmount, currAmount) => prevAmount + currAmount,0)
+            this.setState({orderDetails: newOrders, totalAmount: updatedTotalAmount, orderError: false, updateOrderError: false })
+    }
+
+    assigneeNameInputChangeHandler = (event) => {
+        const userInput = event.target.value;
+
+        const filtered = this.state.suggestions.filter(
+            (suggestion) =>
+                suggestion && suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+        );
+        this.setState({receiverName: userInput, filteredSuggestions: filtered, showSuggestion: true, assigneeNameError: false})
+    }
+
+    assignOrderHandler = async (event) => {
+        event.preventDefault();
+        let assignOrderFormData = {
+            assignUpdate: true,
+            orderId: this.props.rowData && this.props.rowData.orderId,
+            assigneeName: this.state.receiverName,
+            updatedDate: new Date(),
+            assignedStatus: this.props.isAssigning,
+        };
+        let valid = isValidInput(assignOrderFormData.assigneeName);
+        if(valid){
+            await this.props.updateOrder(assignOrderFormData).then(()=>{
+                ToastsStore.success(ORDER_ASSIGNED_SUCCESSFULLY, 500);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500)
+            }).catch(error=> ToastsStore.error(error, 2000));
+        }else{
+            this.setState({assigneeNameError: true})
+        }
     }
 
     receivedPaymentInputChangeHandler = (id, key, event) => {
         let filtered=[];
         let receiverNameInput=''
         let updatedShowSuggestion = this.state.showSuggestion;
-        const newReceivedPayment = this.state.receivedPaymentDetails.map(i=>{
-            if(id === i.orderPaymentId) {
+        const newReceivedPayment = this.state.receivedPaymentDetails.map(receivedPayment=>{
+            if(id === receivedPayment.orderPaymentId) {
               if(key === 'receiverName') {
                   receiverNameInput = event.target.value;
 
@@ -350,19 +377,19 @@ class ConnectedOrder extends Component {
                         suggestion && suggestion.toLowerCase().indexOf(receiverNameInput.toLowerCase()) > -1
                 );
                   updatedShowSuggestion = true;
-                i[key] = receiverNameInput;
+                  receivedPayment[key] = receiverNameInput;
             }else{
                     if(key === 'paymentMode'){
-                        i[key] = event.target.value;
+                        receivedPayment[key] = event.target.value;
                     }else if(key === 'receivedPaymentDate'){
-                        i[key] = event
+                        receivedPayment[key] = event
                     }
                     else {
-                        i[key] = parseInt(event.target.value);
+                        receivedPayment[key] = parseInt(event.target.value);
                     }
                 }
             }
-            return i;
+            return receivedPayment;
         })
 
         this.setState({receivedPaymentDetails: newReceivedPayment, receiverName: receiverNameInput,
@@ -376,7 +403,7 @@ class ConnectedOrder extends Component {
         event.preventDefault();
         let valid = true;
         let receivedPaymentFormData = {
-            orderId: this.props.rowData.orderId,
+            orderId: this.props.rowData && this.props.rowData.orderId,
             receivedPayments: [...this.state.receivedPaymentDetails],
         };
         receivedPaymentFormData.receivedPayments.forEach(receivedPayment => {
@@ -406,12 +433,13 @@ class ConnectedOrder extends Component {
 
     cancelHandler = () => {
         if(this.props.receivedPayment){
-           window.location.reload(); //right thing to be done
+           window.location.reload(); // Instead of reloading page, right thing to be done
         }else{
             this.props.navigate('/order', {replace:true});
         }
     }
 
+    //on clicking add more button on order, it adds object of order details which can then be rendered and manipulated
     moreOrderHandler = () => {
         let newOrders = [...this.state.orderDetails, {
             orderDetailsId: Math.random(),
@@ -423,6 +451,7 @@ class ConnectedOrder extends Component {
         this.setState({moreOrder: true, orderDetails: newOrders})
     }
 
+    //on clicking add more button on received payment, it adds object of received payment which can then be rendered and manipulated
     receivedPaymentHandler = () => {
         let newReceivedPayment = [...this.state.receivedPaymentDetails, {
             orderPaymentId: Math.random(),
@@ -439,6 +468,7 @@ class ConnectedOrder extends Component {
            )
     }
 
+    //on clicking remove button removing specified order details which was rendered on clicking add more
     removeOrderDetailHandler = (orderDetailId) => {
         let updatedOrderDetails =  [...this.state.orderDetails];
         let updatedTotalAmount = this.state.totalAmount;
@@ -449,28 +479,39 @@ class ConnectedOrder extends Component {
         this.setState({orderDetails: updatedOrderDetails, totalAmount: updatedTotalAmount })
     }
 
+    //on clicking remove button removing specified payment details which was rendered on clicking add more
     removeReceivedPaymentHandler = (orderPaymentId) => {
         let updatedReceivedPaymentDetails =  [...this.state.receivedPaymentDetails]
         let index = updatedReceivedPaymentDetails.findIndex(receivedPayment  => receivedPayment.orderPaymentId === orderPaymentId)
         updatedReceivedPaymentDetails.splice(index, 1);
         this.setState({receivedPaymentDetails: updatedReceivedPaymentDetails, receivedPaymentError: false})
     }
+
     render() {
+        //forming array to render elements as per conditions (adding or updating order, received payment )
         const formElementArray = [];
+
+        //to display add more order element
         const orderElement = ['productId', 'quantity', 'rate', 'amount' ];
-        const elements = [ 'orderDate']
         const orderElementArray = [];
+
+        //only to display order date at end of form
+        const elements = [ 'orderDate']
+
+        //to display received payment
         const receivedPaymentElement = ['receivedAmount', 'paymentMode', 'receivedPaymentDate' ];
         const receivedPaymentElementArray = []
-        for(let key in this.state.orderForm){
 
-           if(!this.props.isEditing && elements.includes(key)) {
+        for(let key in this.state.orderForm){
+            //render order date on add order form only
+           if(!this.props.isEditing && !this.props.receivedPayment && !this.props.isAssigning && elements.includes(key)) {
                 formElementArray.push({
                     id: key,
                     config: this.state.orderForm[key]
                 })
             }
 
+           //render product details in order(productId, quantity, rate, amount) when clicked on add more order or edit order
             if((this.state.moreOrder || this.props.isEditing) && orderElement.includes(key)){
                 orderElementArray.push({
                     id: key,
@@ -478,6 +519,7 @@ class ConnectedOrder extends Component {
                 })
             }
 
+            //render received payment
             if(this.state.receivedPayment && receivedPaymentElement.includes(key)){
                 receivedPaymentElementArray.push({
                     id: key,
@@ -490,19 +532,23 @@ class ConnectedOrder extends Component {
             <>
             <ToastsContainer position='top_center' store={ToastsStore} />
             <div className={ this.props.isEditing? classes.EditOrder : this.props.receivedPayment ? classes.ReceivedPayment : classes.Order}>
-                <h4 className={classes.Title}>{ this.props.isEditing? 'Update Order Details' : this.props.receivedPayment ?'Enter Payment Details' : this.props.isAssigning ?
-                    'Assign Order' : 'Enter Order Details'} </h4>
+                <h4 className={classes.Title}>{
+                    this.props.isEditing? UPDATE_ORDER_DETAILS :
+                    this.props.receivedPayment ?ENTER_PAYMENT_DETAILS :
+                    this.props.isAssigning ?  ASSIGN_ORDER :
+                     ENTER_ORDER_DETAILS}
+                </h4>
                 <form>
-                    {
-                        <>
-                         {!this.props.receivedPayment && !this.props.isEditing && !this.props.isAssigning && <Input elementType='input'
+                      { /*Add and Update Order Form render */}
+                      {
+                         !this.props.receivedPayment && !this.props.isEditing && !this.props.isAssigning &&
+                           <>
+                             <Input elementType='input'
                                elementConfig={this.state.orderForm['billNo'].elementConfig}
                                value={this.state.orderForm['billNo'].value}
                                label={this.state.orderForm['billNo'].label}
                                changed={(event)=>this.inputChangeHandler( event, 'billNo' )}
-                        />}
-                        {!this.props.isEditing && !this.props.receivedPayment && !this.props.isAssigning &&
-                            <>
+                               />
                                 <Input elementType='autocompleteInput'
                                        value={this.state.customerName}
                                        label={'Customer Name'}
@@ -513,19 +559,15 @@ class ConnectedOrder extends Component {
                                     onClick={(event)=>this.onClick(event)
                                     }
                                 />}
-                            </>
-                           }
-                             {
-                                !this.props.isEditing && !this.props.receivedPayment && !this.props.isAssigning &&
-                                <div className={classes.AddMoreOrderTitle}>
-                                    <p >Add Product Type and Quantity</p>
-                                    <GoDiffAdded className={classes.AddMoreOrderButton} onClick={this.moreOrderHandler}/>
-                                </div>
-                            }
-                        </>
-                    }
-                    {  !this.props.isAssigning &&
-                        this.state.orderDetails.map((order)=>(
+                               <div className={classes.AddMoreOrderTitle}>
+                                   <p >Add Product Type and Quantity</p>
+                                   <GoDiffAdded className={classes.AddMoreOrderButton} onClick={this.moreOrderHandler}/>
+                               </div>
+                             </>
+                          }
+                         {/* render this on add order form and edit order - look for orderElementArray in render*/}
+                         {
+                           this.state.orderDetails.map((order)=>(
                             <div className={classes.MoreOrderElement} key={order.orderDetailsId}>
                                 {orderElementArray.map(ele => (
                                     <Input elementType={ele.config.elementType}
@@ -537,11 +579,21 @@ class ConnectedOrder extends Component {
                                 ) )}
                                 {!this.props.isEditing && <CgCloseO onClick={()=>this.removeOrderDetailHandler(order.orderDetailsId)} className={classes.CloseIcon}/>}
                             </div>
-                        ))
-                    }
-                    {  this.props.receivedPayment &&
+                          ))
+                       }
+                       {/* Displaying order date on add Order Form only -- look for formElement array in render*/}
+                       {  formElementArray.map(formElement => (
+                        <Input elementType={formElement.config.elementType}
+                               elementConfig={formElement.config.elementConfig}
+                               value={formElement.config.value}
+                               label={formElement.config.label}
+                               changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
+                       ) )}
+
+                      { /* Received payment render */}
+                      {  this.props.receivedPayment &&
                         <>
-                       <div className={classes.ReceivedPaymentTitle}>
+                        <div className={classes.ReceivedPaymentTitle}>
                             <p> Received Payment?</p>
                             <GoDiffAdded className={classes.AddMoreOrderButton} onClick={this.receivedPaymentHandler}/>
                         </div>
@@ -570,35 +622,30 @@ class ConnectedOrder extends Component {
                                 <CgCloseO onClick={()=>this.removeReceivedPaymentHandler(receivedPayment.orderPaymentId)} className={classes.CloseIcon}/>
                             </div>
                             ))}
-                        {this.state.receivedPaymentError && <span className={classes.ErrorMessage}> All fields are required! </span>}
+                        {this.state.receivedPaymentError && <span className={classes.ErrorMessage}> {ALL_FIELDS_ARE_REQUIRED} </span>}
                         </>
-                    }
+                     }
+                    { /*Assign order render*/}
                     {
                         this.props.isAssigning &&
-                            <div>
-                                <Input elementType='autocompleteInput'
-                                       value={this.state.receiverName}
-                                       label={'Assignee Name'}
-                                       placeholder={'Enter or Select Receiver Name'}
-                                       error={this.state.assigneeNameError}
-                                       errorMessage={"Please add Assignee Name"}
-                                       changed={(event)=>this.assigneeNameInputChangeHandler( event )}/>
-                                {this.state.showSuggestion && this.state.receiverName && <InputSuggestionList
-                                    filteredSuggestions={this.state.filteredSuggestions}
-                                    onClick={(event)=>this.onClick(event )
-                                    }
-                                />}
-                            </div>
+                        <>
+                            <Input elementType='autocompleteInput'
+                                   value={this.state.receiverName}
+                                   label={'Assignee Name'}
+                                   placeholder={'Enter or Select Receiver Name'}
+                                   changed={(event) => this.assigneeNameInputChangeHandler(event)}/>
+                             {this.state.showSuggestion && this.state.receiverName && <InputSuggestionList
+                                filteredSuggestions={this.state.filteredSuggestions}
+                                onClick={(event) => this.onClick(event)
+                                }
+                            />}
+                            {this.state.assigneeNameError && <p className={classes.ErrorMessage}> {PLEASE_ADD_ASSIGNEE_NAME}</p>}
+                        </>
                     }
-                    {!this.props.receivedPayment && !this.props.isAssigning && formElementArray.map(formElement => (
-                            <Input elementType={formElement.config.elementType}
-                                   elementConfig={formElement.config.elementConfig}
-                                   value={formElement.config.value}
-                                   label={formElement.config.label}
-                                   changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
-                    ) )}
-                    {this.state.orderError && <p className={classes.ErrorMessage}> All fields are required!!</p>}
 
+
+                    {this.state.orderError && <p className={classes.ErrorMessage}> {ALL_FIELDS_ARE_REQUIRED}</p>}
+                    {this.props.isEditing && this.state.updateOrderError && <p className={classes.ErrorMessage}> {ALL_FIELDS_ARE_REQUIRED}</p>}
                     {this.props.isEditing || this.state.moreOrder ? <p className={classes.TotalAmount}> TOTAL AMOUNT : {this.state.totalAmount}</p>: this.state.receivedPayment ?
                     <p className={classes.TotalAmount}>  BALANCE DUE : {this.state.balanceDue}</p> : null}
 

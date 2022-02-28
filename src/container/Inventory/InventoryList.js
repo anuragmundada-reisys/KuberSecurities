@@ -1,24 +1,22 @@
 import React, {Component } from 'react';
 import { connect } from 'react-redux';
-import {getInventoryData, searchInventory} from '../../redux/action/InventoryAction';
+import {getInventoryData} from '../../redux/action/InventoryAction';
 import Table from '../../component/UI/Table/Table';
 import Button from '../../component/UI/Button/Button';
 import classes from './InventoryList.module.css';
 import { INVENTORY_LIST_COLUMNS } from '../../component/UI/Table/Utils';
-import InventorySearch from "./InventorySearch";
+import InventoryFilter from "./InventoryFilter";
 import {ToastsContainer, ToastsStore} from "react-toasts";
 import {DATA_NOT_FOUND} from "../../common/Utils";
 
 function mapDispatchToProps(dispatch) {
     return {
-        getInventoryData: ()=> dispatch(getInventoryData()),
-        searchInventory: (params)=>dispatch(searchInventory(params))
+        getInventoryData: (params)=> dispatch(getInventoryData(params)),
     };
 }
 
 class ConnectedInventoryList extends Component {
     state={
-        isSearchInventory: false,
         dataFound:true
     }
     componentDidMount() {
@@ -30,24 +28,21 @@ class ConnectedInventoryList extends Component {
     }
 
     searchInventoryHandler = async (params) => {
-        await this.props.searchInventory(params).then(()=>{
-            if(this.props.searchedInventory.length === 0){
+        await this.props.getInventoryData(params).then(()=>{
+            if(this.props.inventoryData.length === 0){
                 this.setState({dataFound: false})
                 ToastsStore.error(DATA_NOT_FOUND, 2000);
             }else{
-                this.setState({isSearchInventory: true, dataFound:true});
+                this.setState({ dataFound:true});
             }
         }).catch(error=> ToastsStore.error(error, 2000));
-
     }
-
 
     clearSearchHandler = () => {
         window.location.reload();
     }
    
     render(){
-        const data = this.state.isSearchInventory ? this.props.searchedInventory : this.props.inventoryData;
         return (
             <>
                 <ToastsContainer position='top_center' store={ToastsStore} />
@@ -58,8 +53,8 @@ class ConnectedInventoryList extends Component {
                    <Button btnType='Success' clicked={this.addInventoryHandler}> ADD </Button>
                 </div>
                   <div className="mt-4">
-                    <InventorySearch clicked={(params)=>this.searchInventoryHandler(params)} clearClicked={this.clearSearchHandler}/>
-                    <Table columns={INVENTORY_LIST_COLUMNS} data={data} dataFound={this.state.dataFound}/>
+                    <InventoryFilter clicked={(params)=>this.searchInventoryHandler(params)} clearClicked={this.clearSearchHandler}/>
+                    <Table columns={INVENTORY_LIST_COLUMNS} data={this.props.inventoryData} dataFound={this.state.dataFound}/>
                   </div>
                 </main>
                 </div>
@@ -70,7 +65,6 @@ class ConnectedInventoryList extends Component {
 function mapStateToProps(state) {
     return {
         inventoryData: state.inventoryData,
-        searchedInventory: state.searchedInventory
     };
 }
 

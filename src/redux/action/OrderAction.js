@@ -1,6 +1,7 @@
 import { ADD_ORDER, GET_ALL_ORDERS, RECEIVED_PAYMENTS, GET_ORDER_ASSIGNEE_HISTORY} from '../constant/ActionType';
 import axios from '../../axios';
 import {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
+import {stringify} from "querystringify";
 
 export function addOrder(payload) {
     return function(dispatch){
@@ -46,7 +47,7 @@ export function getReceivedPayment(orderId) {
     return function(dispatch){
         return axios.get('/kuberbeverages/paymenthistory/v1/' + orderId).then((response)=>{
             dispatch({ type: RECEIVED_PAYMENTS, payload: response.data });
-        }) .catch(error=>{
+        }).catch(error=>{
             if(error.response){
                 throw error.response.data;
             }else{
@@ -55,9 +56,9 @@ export function getReceivedPayment(orderId) {
     }
 };
 
-export function getAllOrders(){
+export function getAllOrders(params){
     return function(dispatch) {
-        return axios.get('/kuberbeverages/orders/v1').then(response=>{
+        return axios.get('/kuberbeverages/orders/v1?'+ stringify(params)).then(response=>{
             dispatch({ type: GET_ALL_ORDERS, payload: response.data });
         }).catch(error=>{
             if(error.response){

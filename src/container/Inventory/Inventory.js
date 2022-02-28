@@ -6,7 +6,12 @@ import { addInventory } from '../../redux/action/InventoryAction';
 import { getMasterData } from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
 import {ToastsContainer, ToastsStore} from "react-toasts";
-import {ADDED_ITEMS_TO_INVENTORY, isValidInput} from "../../common/Utils";
+import {
+    ADDED_ITEMS_TO_INVENTORY,
+    ALL_FIELDS_ARE_REQUIRED,
+    isValidInput,
+    PLEASE_ADD_RECEIVED_PRODUCTS
+} from "../../common/Utils";
 import {GoDiffAdded} from "react-icons/go";
 import {CgCloseO} from "react-icons/cg";
 
@@ -87,13 +92,13 @@ class ConnectedInventory extends Component {
          };
 
          if(formData.products.length === 0){
-             ToastsStore.error('Please add received Products', 2000)
+             ToastsStore.error(PLEASE_ADD_RECEIVED_PRODUCTS, 2000)
          }else{
              for(let key in formData){
                  if(key === 'productReceivedDate')
                      valid = isValidInput(formData[key])
                  if(key==='products') {
-                     formData[key].length !==0 && formData[key].map((product)=>{
+                     formData[key].length !==0 && formData[key].forEach((product)=>{
                          for(let element in product){
                              valid = isValidInput(product[element])
                              if(!valid){
@@ -197,7 +202,7 @@ class ConnectedInventory extends Component {
                                changed={(event) => this.inputChangeHandler( event)}
                         />
                         {this.state.inventoryError &&
-                          <p className={classes.ErrorMessage}> All fields are required! </p>}
+                          <p className={classes.ErrorMessage}> {ALL_FIELDS_ARE_REQUIRED}</p>}
                         <Button btnType='Success' disabled={this.state.inventoryAddDisabled} clicked={this.addInventoryHandler}> ADD </Button>
                         <Button btnType='Danger' clicked={this.cancelHandler}> CANCEL </Button>
 

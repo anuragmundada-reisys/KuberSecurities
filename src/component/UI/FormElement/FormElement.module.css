@@ -37,11 +37,4 @@ select:invalid{
     color: grey;
 }
 
-.ErrorMessage {
-    color: red;
-    font-size: 16px;
-}
 
-.input :invalid{
-    border: 1px solid red;
-}

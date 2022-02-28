@@ -7,11 +7,22 @@ export const RECEIVED_AMOUNT_GREATER_THAN_BALANCE_DUE = 'Received Amount is grea
 export const RECEIVED_AMOUNT_ADDED_SUCCESSFULLY = 'Received Amount Added Successfully.'
 export const ADDED_ITEMS_TO_INVENTORY = 'Added items to Inventory Successfully!';
 export const SELECT_DATE_DASHBOARD = 'Please select date to view Order and Payment Metrics';
+export const ORDER_ADDED_SUCCESSFULLY = 'Order Added Successfully!';
+export const ORDER_UPDATED_SUCCESSFULLY = 'Order Updated Successfully!';
+export const UPDATE_ORDER_DETAILS = 'Update Order Details';
+export const ENTER_PAYMENT_DETAILS = 'Enter Payment Details';
+export const ENTER_ORDER_DETAILS = 'Enter Order Details';
+export const ASSIGN_ORDER = 'Assign Order';
+export const ALL_FIELDS_ARE_REQUIRED = 'All fields are required!';
+export const PLEASE_ADD_ASSIGNEE_NAME = 'Please add Assignee Name';
+export const PLEASE_ADD_RECEIVED_PRODUCTS = 'Please add received Products';
+
 
 export const isValidInput = (value) => {
-    if(value === '' || value === null || value === undefined){
+    if(value === '' || value === null || value === undefined || Number.isNaN(value)){
         return false;
-    }else{
+    }
+    else{
         return true;
     }
 }
