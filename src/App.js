@@ -8,8 +8,12 @@ import Inventory from './container/Inventory/Inventory';
 import Dashboard from './container/Dashboard/Dashboard';
 import Home from "./container/Home/Home";
 import Collection from "./container/Collection/Collection";
+import Signup from "./container/Authentication/Signup";
+import Login from "./container/Authentication/Login";
+import Logout from "./container/Authentication/Logout";
+import RequireAuth from "./container/Authentication/RequireAuth";
 
-function App() {
+function App(props) {
   const navigate = useNavigate();
   return (
     <div className="App">
@@ -17,15 +21,47 @@ function App() {
          <Routes>
            <Route path='/' exact element={<Home/>}/>
            <Route path='/dashboard' exact element={<Dashboard/>}/>
-            <Route path="/order" exact element={<OrderList navigate={navigate}/>}/>
-            <Route path='/order/add' exact element={<Order navigate={navigate}/>}/>
-            <Route path="/inventory" exact element={<InventoryList navigate={navigate}/>}/>
-            <Route path='/inventory/add' exact element={<Inventory navigate={navigate}/>}/>
-            <Route path='/collection' exact element={<Collection navigate={navigate}/>}/>
+             <Route path="/signup" exact element={<Signup navigate={navigate}/>}/>
+             <Route path="/login" exact element={<Login navigate={navigate}/>}/>
+            <Route path="/order" exact element={
+                <RequireAuth>
+                  <OrderList navigate={navigate}/>
+                </RequireAuth>
+              }
+            />
+            <Route path='/order/add' exact element={
+                <RequireAuth>
+                 <Order navigate={navigate}/>
+                </RequireAuth>
+              }
+            />
+            <Route path="/inventory" exact element={
+                <RequireAuth>
+                  <InventoryList navigate={navigate}/>
+                </RequireAuth>
+              }
+            />
+            <Route path='/inventory/add' exact element={
+               <RequireAuth>
+                <Inventory navigate={navigate}/>
+               </RequireAuth>
+              }
+            />
+            <Route path='/collection' exact element={
+                <RequireAuth>
+                  <Collection navigate={navigate}/>
+                </RequireAuth>
+            }/>
+           <Route path='/logout' exact element={
+               <RequireAuth>
+                 <Logout navigate={navigate}/>
+                </RequireAuth>
+           } />
          </Routes>
       </Layout>
     </div>
   );
 }
+
 
 export default App;

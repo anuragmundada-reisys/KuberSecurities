@@ -1,0 +1,56 @@
+.Input {
+    width: auto;
+    margin: 60px;
+    transition: all .3s;
+    position: relative;
+}
+
+.Label {
+    font-weight: 600;
+    color: #5e1d8a;
+    display: block;
+    opacity: 1;
+    transform: translateY(-2em);
+    transform-origin: 0 0;
+    position: absolute;
+    transition: all .3s;
+}
+
+
+.AuthInputElement {
+    border: none;
+    border-bottom: 1px solid #5a4c63;
+    width: 100%;
+    outline: none;
+    box-shadow: none;
+    transition: all .5s;
+    padding: 5px;
+    display: block;
+
+}
+
+.AuthInputElement::placeholder  {
+  color: transparent;
+}
+
+.AuthInputElement:focus  {
+    box-shadow: none;
+    outline: none;
+    border-bottom: 2px solid #5e1d8a;;
+}
+
+.AuthInputElement:focus + .Label,
+.AuthInputElement:not(:placeholder-shown) + .Label
+{
+    transform: translateY(-3.5em) scale(.9);
+}
+
+.Input:focus-within{
+    transform: scale(1.02,1.02);
+}
+
+.AuthErrorMessage {
+    font-size: 16px;
+    color: red;
+    float: left;
+}

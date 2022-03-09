@@ -8,10 +8,10 @@
 .NavigationItem a {
     color: #5e1d8a;
     text-decoration: none;
-    width: 100%;
     padding: 10px 15px;
     display: block;
     font-weight: 600;
+    width: 100%;
 }
 
 @media (max-width:500px) {
@@ -20,6 +20,7 @@
         box-sizing: border-box;
         display: block;
         width: 100%;
+
     }
 
     .NavigationItem a {

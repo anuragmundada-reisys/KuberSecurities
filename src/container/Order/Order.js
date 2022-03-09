@@ -347,7 +347,7 @@ class ConnectedOrder extends Component {
             assignUpdate: true,
             orderId: this.props.rowData && this.props.rowData.orderId,
             assigneeName: this.state.receiverName,
-            updatedDate: new Date(),
+            assignedUpdatedDate: new Date(),
             assignedStatus: this.props.isAssigning,
         };
         let valid = isValidInput(assignOrderFormData.assigneeName);
@@ -663,9 +663,9 @@ class ConnectedOrder extends Component {
 
 function mapStateToProps(state) {
     return {
-      masterData: state.masterData,
-      customerNames: state.customerNames,
-      receiverNames: state.receiverNames,
+      masterData: state.localSales.masterData,
+      customerNames: state.localSales.customerNames,
+      receiverNames: state.localSales.receiverNames,
     };
   }
 

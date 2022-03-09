@@ -24,11 +24,6 @@
     box-shadow: 0 2px 2px #e7caca;
 }
 
-.InputElement :focus {
-    border: 1px solid #5e1d8a;
-    background-color: #eee;
-}
-
 .SelectOption{
     color: black;
 }
@@ -36,5 +31,6 @@
 select:invalid{
     color: grey;
 }
+
 
 

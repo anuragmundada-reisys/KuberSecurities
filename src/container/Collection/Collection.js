@@ -47,7 +47,7 @@ class ConnectedCollection extends Component {
             assignUpdate: true,
             orderId: rowData.orderId,
             assigneeName: null,
-            updatedDate: new Date(),
+            assignedUpdatedDate: new Date(),
             assignedStatus: false,
         };
 
@@ -139,7 +139,7 @@ class ConnectedCollection extends Component {
 }
 function mapStateToProps(state) {
     return {
-        orderList: state.orderList,
+        orderList: state.localSales.orderList,
     };
 }
 

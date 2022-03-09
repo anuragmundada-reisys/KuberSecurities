@@ -126,11 +126,12 @@ class ConnectedCollectionFilter extends  Component {
                            value={this.state.customerName}
                            label={'Customer Name'}
                            placeholder={'Search Customer Name'}
-                           changed={(event)=>this.inputChangeHandler( event, 'customerName' )}/>
-                    {this.state.showCustomerNameSuggestion  && <InputSuggestionList
+                           changed={(event)=>this.inputChangeHandler(event, 'customerName' )}/>
+                    {this.state.showCustomerNameSuggestion && <InputSuggestionList
                         filteredSuggestions={this.state.customerNameFilteredSuggestions}
-                        onClick={(event)=>this.onClick(event, 'customerName' )
-                        }/>}
+                        onClick={(event)=>this.onClick(event, 'customerName')
+                        }
+                    />}
                 </div>
                 {
                     this.props.isOrderSearch &&
@@ -203,9 +204,9 @@ class ConnectedCollectionFilter extends  Component {
 
 function mapStateToProps(state) {
     return {
-        customerNames: state.customerNames,
-        receiverNames: state.receiverNames,
-        billNumbers: state.billNumbers,
+        customerNames: state.localSales.customerNames,
+        receiverNames: state.localSales.receiverNames,
+        billNumbers: state.localSales.billNumbers,
     };
 }
 
