@@ -5,11 +5,11 @@ import {
     LOGIN_FAIL,
     LOGOUT, RESET_PASSWORD,
 } from "../constant/ActionType";
+const user = JSON.parse(localStorage.getItem("user"));
+const initialState = user
+    ? { isLoggedIn: true, isResetPassword: false, user }
+    : { isLoggedIn: false, isResetPassword: false, user: null };
 
-const initialState = {
-     user: null,
-     isLoggedIn: false
-}
  function authReducer(state = initialState, action) {
     const { type, payload } = action;
     switch (type) {
@@ -46,6 +46,7 @@ const initialState = {
                 ...state,
                 isLoggedIn: true,
                 user: null,
+                isResetPassword: true
             };
         default:
             return state;

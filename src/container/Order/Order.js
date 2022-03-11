@@ -9,7 +9,7 @@ import { GoDiffAdded } from 'react-icons/go';
 import { CgCloseO } from 'react-icons/cg';
 import InputSuggestionList from "../../component/UI/FormElement/InputSuggestionList";
 import { ToastsContainer, ToastsStore } from 'react-toasts';
-import authHeader, {
+import {
     ALL_FIELDS_ARE_REQUIRED,
     ASSIGN_ORDER,
     ENTER_ORDER_DETAILS,
@@ -23,11 +23,11 @@ import authHeader, {
 
 function mapDispatchToProps(dispatch) {
     return {
-        addOrder: (order, authHeader) => dispatch(addOrder(order, authHeader)),
-        updateOrder: (order, authHeader) => dispatch(updateOrder(order, authHeader)),
+        addOrder: order => dispatch(addOrder(order)),
+        updateOrder: order => dispatch(updateOrder(order)),
         getMasterData: ()=> dispatch(getMasterData()),
         getCustomerNames: ()=> dispatch(getCustomerNames()),
-        addReceivedPayment: (receivedPayment, authHeader) => dispatch(addReceivedPayment(receivedPayment, authHeader)),
+        addReceivedPayment: receivedPayment => dispatch(addReceivedPayment(receivedPayment)),
         getReceiverNames: ()=> dispatch(getReceiverNames()),
     };
 }
@@ -238,9 +238,9 @@ class ConnectedOrder extends Component {
               }
           }
         })
-        const header = authHeader(this.props.user);
+
         valid &&
-        this.props.addOrder(formData, header).then(()=>{
+        this.props.addOrder(formData).then(()=>{
             ToastsStore.success(ORDER_ADDED_SUCCESSFULLY, 1000);
             setTimeout(() => {
                 this.props.navigate('/order', {replace:true});
@@ -267,9 +267,8 @@ class ConnectedOrder extends Component {
                 }
             }
         })
-        const header = authHeader(this.props.user);
         valid &&
-        this.props.updateOrder(editFormData, header).then(()=>{
+        this.props.updateOrder(editFormData).then(()=>{
             ToastsStore.success(ORDER_UPDATED_SUCCESSFULLY, 1000);
             setTimeout(() => {
                 window.location.reload();
@@ -423,8 +422,7 @@ class ConnectedOrder extends Component {
         }else if(!valid){
             this.setState({receivedPaymentError: true})
         }else{
-            const header = authHeader(this.props.user);
-            !this.state.receivedPaymentError && this.props.addReceivedPayment(receivedPaymentFormData, header).then(()=>{
+            this.props.addReceivedPayment(receivedPaymentFormData).then(()=>{
                 ToastsStore.success(RECEIVED_AMOUNT_ADDED_SUCCESSFULLY, 1000);
                 setTimeout(() => {
                     window.location.reload();
@@ -668,7 +666,6 @@ function mapStateToProps(state) {
       masterData: state.localSales.masterData,
       customerNames: state.localSales.customerNames,
       receiverNames: state.localSales.receiverNames,
-      user: state.auth.user
     };
   }
 

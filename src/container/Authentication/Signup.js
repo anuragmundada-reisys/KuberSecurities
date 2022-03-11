@@ -6,11 +6,11 @@ import { signup } from "../../redux/action/AuthAction";
 import {connect} from "react-redux";
 import {ToastsContainer, ToastsStore} from "react-toasts";
 import  validator  from "validator";
-import authHeader, {ALL_FIELDS_ARE_REQUIRED, isValidInput, STRONG_PASSWORD} from "../../common/Utils";
+import {ALL_FIELDS_ARE_REQUIRED, isValidInput} from "../../common/Utils";
 
 function mapDispatchToProps(dispatch) {
     return {
-        signup: (userData, header) => dispatch(signup(userData, header)),
+        signup: userData => dispatch(signup(userData)),
     };
 }
 
@@ -45,7 +45,7 @@ class ConnectedSignup extends Component {
                 },
                 value: '',
                 label: 'Password',
-                errorMessage: STRONG_PASSWORD
+                errorMessage: 'Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters'
             },
         },
         signupError: false,
@@ -116,10 +116,9 @@ class ConnectedSignup extends Component {
             }
         }
 
-        const header = authHeader(this.props.user);
 
         !this.state.signupError && this.state.valid['email'] && this.state.valid['password'] &&
-        await this.props.signup(userData, header).then(()=>{
+        await this.props.signup(userData).then(()=>{
             ToastsStore.success("User registered successfully!", 2000);
             setTimeout(() => {
                 this.props.navigate('/', {replace:true});
@@ -160,16 +159,8 @@ class ConnectedSignup extends Component {
 
 }
 
-function mapStateToProps(state) {
-    return {
-        user: state.auth.user,
-    };
-}
-
-
-
 const Signup = connect(
-    mapStateToProps,
+  null,
     mapDispatchToProps
 )(ConnectedSignup)
 

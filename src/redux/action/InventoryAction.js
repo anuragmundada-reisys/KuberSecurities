@@ -1,11 +1,11 @@
 import { ADD_INVENTORY, GET_INVENTORY_DATA} from '../constant/ActionType';
 import axios from '../../axios';
 import {stringify} from "querystringify";
-import {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
+import authHeader, {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
 
-export function addInventory(payload, authHeader) {
+export function addInventory(payload) {
     return function(dispatch){
-      return axios.post('/kuberbeverages/inventory/v1', payload, { headers: authHeader }).then(()=>{
+      return axios.post('/kuberbeverages/inventory/v1', payload, { headers: authHeader() }).then(()=>{
           dispatch({ type: ADD_INVENTORY, payload: payload });
       }).catch(error=>{
           if(error.response){

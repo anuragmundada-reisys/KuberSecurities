@@ -1,10 +1,10 @@
 import {LOGIN_SUCCESS, LOGOUT, RESET_PASSWORD} from '../constant/ActionType';
 import axios from '../../axios';
-import  {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
+import authHeader, {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
 
-export function signup(payload, authHeader) {
+export function signup(payload) {
     return function(dispatch){
-        return axios.post('/kuberbeverages/auth/v1/signup', payload, { headers: authHeader }).then(()=>{
+        return axios.post('/kuberbeverages/auth/v1/signup', payload, { headers: authHeader() }).then(()=>{
             //dispatch({ type: SIGNUP_SUCCESS, payload: payload });
         }).catch(error=>{
             if(error.response && error.response.data && error.response.data.error){
@@ -22,6 +22,7 @@ export function login(payload) {
     return function(dispatch){
         return axios.post('/kuberbeverages/auth/v1/login', payload).then((response)=>{
             if(response && response.data && response.data.token){
+                localStorage.setItem("user", JSON.stringify(response.data) )
                 dispatch({ type: LOGIN_SUCCESS, payload: response.data });
             }
         }).catch(error=>{
@@ -38,7 +39,7 @@ export function login(payload) {
 
 export const logout = () => (dispatch) => {
     return axios.get('/kuberbeverages/auth/v1/logout').then((response)=>{
-       // localStorage.removeItem("user" )
+        localStorage.removeItem("user" )
         dispatch({ type: LOGOUT});
     }).catch(error=>{
         if(error.response){
@@ -49,8 +50,8 @@ export const logout = () => (dispatch) => {
 
 };
 
-export const resetpassword = (resetpasswordData, authHeader) => (dispatch) => {
-    return axios.patch('/kuberbeverages/auth/v1/resetpassword', resetpasswordData, { headers: authHeader }).then((response)=>{
+export const resetpassword = (resetpasswordData) => (dispatch) => {
+    return axios.patch('/kuberbeverages/auth/v1/resetpassword', resetpasswordData, { headers: authHeader() }).then((response)=>{
         dispatch({ type: RESET_PASSWORD});
     }).catch(error=>{
         if(error.response){
