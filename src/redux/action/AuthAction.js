@@ -1,4 +1,4 @@
-import { LOGIN_SUCCESS, LOGOUT} from '../constant/ActionType';
+import {LOGIN_SUCCESS, LOGOUT, RESET_PASSWORD} from '../constant/ActionType';
 import axios from '../../axios';
 import authHeader, {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
 
@@ -41,7 +41,24 @@ export const logout = () => (dispatch) => {
     return axios.get('/kuberbeverages/auth/v1/logout').then((response)=>{
         localStorage.removeItem("user" )
         dispatch({ type: LOGOUT});
-    })
+    }).catch(error=>{
+        if(error.response){
+            throw error.response.data;
+        }else{
+            throw INTERNAL_ERROR_MESSAGE
+        }})
+
+};
+
+export const resetpassword = (resetpasswordData) => (dispatch) => {
+    return axios.patch('/kuberbeverages/auth/v1/resetpassword', resetpasswordData, { headers: authHeader() }).then((response)=>{
+        dispatch({ type: RESET_PASSWORD});
+    }).catch(error=>{
+        if(error.response){
+            throw error.response.data;
+        }else{
+            throw INTERNAL_ERROR_MESSAGE
+        }})
 
 };
 

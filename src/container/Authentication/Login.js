@@ -23,7 +23,7 @@ class ConnectedLogin extends Component {
                     placeHolder: 'Enter User Name'
                 },
                 value: '',
-                label: 'Name'
+                label: 'Username'
             },
             password: {
                 elementType: 'input',

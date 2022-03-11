@@ -12,6 +12,7 @@ import Signup from "./container/Authentication/Signup";
 import Login from "./container/Authentication/Login";
 import Logout from "./container/Authentication/Logout";
 import RequireAuth from "./container/Authentication/RequireAuth";
+import ResetPassword from "./container/Authentication/ResetPassword";
 
 function App(props) {
   const navigate = useNavigate();
@@ -56,6 +57,11 @@ function App(props) {
                <RequireAuth>
                  <Logout navigate={navigate}/>
                 </RequireAuth>
+           } />
+           <Route path='/resetpassword' exact element={
+                 <RequireAuth>
+                     <ResetPassword navigate={navigate}/>
+                 </RequireAuth>
            } />
          </Routes>
       </Layout>

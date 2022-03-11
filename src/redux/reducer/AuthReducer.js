@@ -3,12 +3,12 @@ import {
     SIGNUP_FAIL,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
-    LOGOUT,
+    LOGOUT, RESET_PASSWORD,
 } from "../constant/ActionType";
 const user = JSON.parse(localStorage.getItem("user"));
 const initialState = user
-    ? { isLoggedIn: true, user }
-    : { isLoggedIn: false, user: null };
+    ? { isLoggedIn: true, isResetPassword: false, user }
+    : { isLoggedIn: false, isResetPassword: false, user: null };
 
  function authReducer(state = initialState, action) {
     const { type, payload } = action;
@@ -40,6 +40,13 @@ const initialState = user
                 ...state,
                 isLoggedIn: false,
                 user: null,
+            };
+        case RESET_PASSWORD:
+            return {
+                ...state,
+                isLoggedIn: true,
+                user: null,
+                isResetPassword: true
             };
         default:
             return state;

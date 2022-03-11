@@ -5,7 +5,8 @@
     top: 0;
     left: 0;
     display: flex;
-    justify-content: space-between;
+   justify-content: space-between;
+    flex-direction: row;
     padding: 0 20px;
     box-sizing: border-box;
     z-index: 90;
@@ -14,6 +15,11 @@
 
 .Toolbar nav {
     height: 100%
+}
+
+.NavbarAndAccount{
+    display: flex;
+    flex-direction: row;
 }
 
 .Menu {
@@ -28,10 +34,15 @@
   display: inline-flex;
 }
 
-@media(max-width:499px){
+@media(max-width:800px){
     .smallScreenOnly{
         display: flex;
         flex-direction: column;
-        
     }
+
+    .NavbarAndAccount{
+        display: flex;
+        flex-direction: column;
+    }
+
 }

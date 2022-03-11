@@ -7,7 +7,7 @@ class Layout extends Component {
     render(){
         return(
             <>
-            <Toolbar/> 
+            <Toolbar/>
              <main className = {classes.content}>
                 {this.props.children}
             </main>

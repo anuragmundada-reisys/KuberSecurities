@@ -16,6 +16,7 @@
     "moment": "^2.29.1",
     "querystringify": "^2.2.0",
     "react": "^17.0.2",
+    "react-bootstrap-dropdown-menu": "^1.1.23",
     "react-chartjs-2": "^4.0.1",
     "react-datepicker": "^4.6.0",
     "react-dom": "^17.0.2",
@@ -26,6 +27,7 @@
     "react-tailwind-table": "^1.1.1",
     "react-toastify": "^4.1.0",
     "react-toasts": "^3.0.6",
+    "react-tooltip": "^4.2.21",
     "uuid": "^8.3.2",
     "validator": "^13.7.0",
     "web-vitals": "^2.1.4"

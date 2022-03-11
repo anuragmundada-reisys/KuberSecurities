@@ -24,7 +24,7 @@ class ConnectedSignup extends Component {
                     placeHolder: 'Enter User Name'
                 },
                 value: '',
-                label: 'Name',
+                label: 'Username',
                 errorMessage: 'UserName should not be greater than 40 characters'
             },
             email: {
