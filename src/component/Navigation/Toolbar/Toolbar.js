@@ -19,10 +19,7 @@ const Toolbar = (props) => {
                  </nav>
                  {props.isLoggedIn && <UserAccount/>}
              </div>
-
-
          </header>
-       
     )
 }
 

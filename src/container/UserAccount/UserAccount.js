@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import classes from './UserAccount.module.css';
 import { FaUser } from "react-icons/fa"
 import {connect} from "react-redux";
+import NavigationItem from "../../component/Navigation/NavigationItem/NavigationItem";
 
 class ConnectedUserAccount extends Component {
     iconRef = React.createRef();
@@ -47,9 +48,9 @@ class ConnectedUserAccount extends Component {
                         <li style={{fontSize:'13px'}}>You are LoggedIn as:</li>
                         <li className={classes.UserName}>{this.props.user? this.props.user.userName: ''}</li>
                         <hr style={{height:'2px', color: 'gray' , backgroundColor: 'gray'}}/>
-                        <li className={classes.Link}><a href={'/resetpassword'}> Reset Password</a></li>
+                        <li> <NavigationItem link='/resetpassword' exact={'true'}>Reset Password</NavigationItem></li>
                         <hr style={{height:'2px', color: 'gray' , backgroundColor: 'gray'}}/>
-                        <li className={classes.Link}><a href={'/logout'}> Logout</a></li>
+                        <li className={classes.Link}><NavigationItem link='/logout' exact={'true'}>Logout</NavigationItem></li>
                     </ul>
                 </div>}
             </div>

@@ -6,7 +6,7 @@ import { addInventory } from '../../redux/action/InventoryAction';
 import { getMasterData } from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
 import {ToastsContainer, ToastsStore} from "react-toasts";
-import {
+import authHeader, {
     ADDED_ITEMS_TO_INVENTORY,
     ALL_FIELDS_ARE_REQUIRED,
     isValidInput,
@@ -17,7 +17,7 @@ import {CgCloseO} from "react-icons/cg";
 
 function mapDispatchToProps(dispatch) {
     return {
-        addInventory: inventory => dispatch(addInventory(inventory)),
+        addInventory: (inventory, header) => dispatch(addInventory(inventory, header)),
         getMasterData: ()=> dispatch(getMasterData())
     };
 }
@@ -112,8 +112,9 @@ class ConnectedInventory extends Component {
                      return;
                  }
              }
+             const header = authHeader(this.props.user);
              valid &&
-             this.props.addInventory(formData).then(()=>{
+             this.props.addInventory(formData, header).then(()=>{
                  ToastsStore.success(ADDED_ITEMS_TO_INVENTORY, 1500);
                  setTimeout(() => {
                      this.props.navigate('/inventory', {replace:true});
@@ -214,7 +215,8 @@ class ConnectedInventory extends Component {
 
 function mapStateToProps(state) {
     return {
-      masterData: state.localSales.masterData
+      masterData: state.localSales.masterData,
+        user: state.auth.user
     };
   }
 
