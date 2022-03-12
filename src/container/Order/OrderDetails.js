@@ -62,7 +62,7 @@ class ConnectedOrderDetails extends Component {
                     <td style={{textTransform: 'capitalize' }}>{item.billNo}</td>
                     <td> {item.assigneeName} </td>
                     <td> {item.assignedStatus ? 'Assigned' : 'Unassigned'} </td>
-                    <td> {item.updatedDate} </td>
+                    <td> {item.assignedUpdatedDate} </td>
                 </tr>
             )
         })
@@ -115,9 +115,9 @@ class ConnectedOrderDetails extends Component {
 
 function mapStateToProps(state) {
     return {
-        orderList: state.orderList,
-        receivedPayments: state.receivedPayments,
-        assigneeHistory: state.assigneeHistory
+        orderList: state.localSales.orderList,
+        receivedPayments: state.localSales.receivedPayments,
+        assigneeHistory: state.localSales.assigneeHistory
     };
 }
 

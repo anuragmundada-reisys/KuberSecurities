@@ -347,7 +347,7 @@ class ConnectedOrder extends Component {
             assignUpdate: true,
             orderId: this.props.rowData && this.props.rowData.orderId,
             assigneeName: this.state.receiverName,
-            updatedDate: new Date(),
+            assignedUpdatedDate: new Date(),
             assignedStatus: this.props.isAssigning,
         };
         let valid = isValidInput(assignOrderFormData.assigneeName);
@@ -422,7 +422,7 @@ class ConnectedOrder extends Component {
         }else if(!valid){
             this.setState({receivedPaymentError: true})
         }else{
-            this.props.addReceivedPayment(receivedPaymentFormData).then(()=>{
+            !this.state.receivedPaymentError && this.props.addReceivedPayment(receivedPaymentFormData).then(()=>{
                 ToastsStore.success(RECEIVED_AMOUNT_ADDED_SUCCESSFULLY, 1000);
                 setTimeout(() => {
                     window.location.reload();
@@ -663,9 +663,9 @@ class ConnectedOrder extends Component {
 
 function mapStateToProps(state) {
     return {
-      masterData: state.masterData,
-      customerNames: state.customerNames,
-      receiverNames: state.receiverNames,
+      masterData: state.localSales.masterData,
+      customerNames: state.localSales.customerNames,
+      receiverNames: state.localSales.receiverNames,
     };
   }
 

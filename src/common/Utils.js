@@ -16,7 +16,9 @@ export const ASSIGN_ORDER = 'Assign Order';
 export const ALL_FIELDS_ARE_REQUIRED = 'All fields are required!';
 export const PLEASE_ADD_ASSIGNEE_NAME = 'Please add Assignee Name';
 export const PLEASE_ADD_RECEIVED_PRODUCTS = 'Please add received Products';
-
+export const SUPER_ADMIN_ROLE = 'Super_Admin';
+export const NEW_CONFIRM_PASSWORD = 'Confirm password does not match New password';
+export const STRONG_PASSWORD = 'Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters';
 
 export const isValidInput = (value) => {
     if(value === '' || value === null || value === undefined || Number.isNaN(value)){
@@ -24,5 +26,14 @@ export const isValidInput = (value) => {
     }
     else{
         return true;
+    }
+}
+
+export default function authHeader() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+        return { Authorization: 'Bearer ' + user.token };
+    } else {
+        return {};
     }
 }

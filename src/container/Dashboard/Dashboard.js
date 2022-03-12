@@ -107,8 +107,8 @@ class ConnectedHome extends Component{
 
 function mapStateToProps(state) {
   return {
-    count: state.count,
-    availableStock: state.availableStock
+    count: state.localSales.count,
+    availableStock: state.localSales.availableStock
 
   };
 }

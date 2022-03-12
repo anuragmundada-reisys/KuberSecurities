@@ -64,7 +64,7 @@ class ConnectedInventoryList extends Component {
 }
 function mapStateToProps(state) {
     return {
-        inventoryData: state.inventoryData,
+        inventoryData: state.localSales.inventoryData,
     };
 }
 

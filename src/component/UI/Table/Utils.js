@@ -73,9 +73,9 @@ export const COLLECTION_ORDERS_COLUMNS =  [
     },
     {
         Header: "Updated Date",
-        accessor: "updatedDate",
+        accessor: "assignedUpdatedDate",
         Cell: ({ row: { original } }) => {
-            return original.updatedDate === null ? '-' : original.updatedDate;
+            return original.assignedUpdatedDate === null ? '-' : original.assignedUpdatedDate;
         },
     },
 

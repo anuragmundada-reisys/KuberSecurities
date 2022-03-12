@@ -1,11 +1,11 @@
 import { ADD_ORDER, GET_ALL_ORDERS, RECEIVED_PAYMENTS, GET_ORDER_ASSIGNEE_HISTORY} from '../constant/ActionType';
 import axios from '../../axios';
-import {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
+import authHeader, {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
 import {stringify} from "querystringify";
 
 export function addOrder(payload) {
     return function(dispatch){
-      return axios.post('/kuberbeverages/orders/v1', payload).then(()=>{
+      return axios.post('/kuberbeverages/orders/v1', payload, { headers: authHeader() }).then(()=>{
           dispatch({ type: ADD_ORDER, payload: payload });
       }).catch(error=>{
           if(error.response){
@@ -19,7 +19,7 @@ export function addOrder(payload) {
 
 export function updateOrder(payload) {
     return function(dispatch){
-        return axios.patch('/kuberbeverages/orders/v1', payload)
+        return axios.patch('/kuberbeverages/orders/v1', payload, { headers: authHeader() })
         .then()
         .catch(error=>{
             if(error.response){
@@ -33,7 +33,7 @@ export function updateOrder(payload) {
 
 export function addReceivedPayment(payload) {
     return function(dispatch){
-        return axios.post('/kuberbeverages/paymenthistory/v1/', payload).then()
+        return axios.post('/kuberbeverages/paymenthistory/v1/', payload, { headers: authHeader() }).then()
             .catch(error=>{
                 if(error.response){
                     throw error.response.data;

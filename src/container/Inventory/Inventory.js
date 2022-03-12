@@ -214,7 +214,7 @@ class ConnectedInventory extends Component {
 
 function mapStateToProps(state) {
     return {
-      masterData: state.masterData
+      masterData: state.localSales.masterData
     };
   }
 

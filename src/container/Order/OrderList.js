@@ -131,8 +131,8 @@ class ConnectedOrderList extends Component {
 
 function mapStateToProps(state) {
     return {
-        orderList: state.orderList,
-        collectionSearchedOrders: state.collectionSearchedOrders
+        orderList: state.localSales.orderList,
+        collectionSearchedOrders: state.localSales.collectionSearchedOrders
     };
 }
 
