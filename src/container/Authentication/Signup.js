@@ -6,7 +6,7 @@ import { signup } from "../../redux/action/AuthAction";
 import {connect} from "react-redux";
 import {ToastsContainer, ToastsStore} from "react-toasts";
 import  validator  from "validator";
-import {ALL_FIELDS_ARE_REQUIRED, isValidInput} from "../../common/Utils";
+import {ALL_FIELDS_ARE_REQUIRED, isValidInput, STRONG_PASSWORD} from "../../common/Utils";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -45,8 +45,7 @@ class ConnectedSignup extends Component {
                 },
                 value: '',
                 label: 'Password',
-                errorMessage: 'Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters'
-            },
+                errorMessage: STRONG_PASSWORD            },
         },
         signupError: false,
         valid: {

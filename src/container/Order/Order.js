@@ -422,7 +422,7 @@ class ConnectedOrder extends Component {
         }else if(!valid){
             this.setState({receivedPaymentError: true})
         }else{
-            this.props.addReceivedPayment(receivedPaymentFormData).then(()=>{
+            !this.state.receivedPaymentError && this.props.addReceivedPayment(receivedPaymentFormData).then(()=>{
                 ToastsStore.success(RECEIVED_AMOUNT_ADDED_SUCCESSFULLY, 1000);
                 setTimeout(() => {
                     window.location.reload();

@@ -17,7 +17,8 @@ export const ALL_FIELDS_ARE_REQUIRED = 'All fields are required!';
 export const PLEASE_ADD_ASSIGNEE_NAME = 'Please add Assignee Name';
 export const PLEASE_ADD_RECEIVED_PRODUCTS = 'Please add received Products';
 export const SUPER_ADMIN_ROLE = 'Super_Admin';
-
+export const NEW_CONFIRM_PASSWORD = 'Confirm password does not match New password';
+export const STRONG_PASSWORD = 'Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters';
 
 export const isValidInput = (value) => {
     if(value === '' || value === null || value === undefined || Number.isNaN(value)){

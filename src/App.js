@@ -22,8 +22,13 @@ function App(props) {
          <Routes>
            <Route path='/' exact element={<Home/>}/>
            <Route path='/dashboard' exact element={<Dashboard/>}/>
-             <Route path="/signup" exact element={<Signup navigate={navigate}/>}/>
              <Route path="/login" exact element={<Login navigate={navigate}/>}/>
+             <Route path="/signup" exact element={
+                 <RequireAuth>
+                     <Signup navigate={navigate}/>
+                 </RequireAuth>
+             }
+             />
             <Route path="/order" exact element={
                 <RequireAuth>
                   <OrderList navigate={navigate}/>
