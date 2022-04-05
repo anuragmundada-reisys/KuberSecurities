@@ -31,6 +31,20 @@ export function updateOrder(payload) {
     }
 };
 
+export function deleteOrder(orderId) {
+    return function(dispatch){
+        return axios.delete('/kuberbeverages/orders/v1/'+orderId, { headers: authHeader() })
+            .then()
+            .catch(error=>{
+                if(error.response){
+                    throw error.response.data;
+                }else{
+                    throw INTERNAL_ERROR_MESSAGE
+                }
+            })
+    }
+};
+
 export function addReceivedPayment(payload) {
     return function(dispatch){
         return axios.post('/kuberbeverages/paymenthistory/v1/', payload, { headers: authHeader() }).then()

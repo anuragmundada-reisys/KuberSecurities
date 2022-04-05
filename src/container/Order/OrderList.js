@@ -1,6 +1,6 @@
 import React, {Component } from 'react';
 import { connect } from 'react-redux';
-import { getAllOrders } from '../../redux/action/OrderAction';
+import {deleteOrder, getAllOrders} from '../../redux/action/OrderAction';
 import Table from '../../component/UI/Table/Table';
 import Button from '../../component/UI/Button/Button';
 import classes from './OrderList.module.css';
@@ -13,10 +13,12 @@ import OrderDetails from './OrderDetails';
 import OrderAndCollectionFilter from "../../component/UI/Table/OrderAndCollectionFilter";
 import {ToastsContainer, ToastsStore} from "react-toasts";
 import {DATA_NOT_FOUND} from "../../common/Utils";
+import {RiDeleteBin6Line} from "react-icons/ri";
 
 function mapDispatchToProps(dispatch) {
     return {
         getAllOrders: (params)=> dispatch(getAllOrders(params)),
+        deleteOrder: (orderId)=> dispatch(deleteOrder(orderId))
     };
 }
 
@@ -45,6 +47,14 @@ class ConnectedOrderList extends Component {
 
     viewOrderDetailsHandler = (orderId, rowData) => {
         this.setState({viewOrderDetails: true, rowData: rowData})
+    }
+
+    deleteOrderHandler = (orderId) => {
+        this.props.deleteOrder(orderId)
+            .then(()=>{
+                ToastsStore.success("Order Deleted successfully", 3000)
+                window.location.reload()})
+            .catch(error=> ToastsStore.error(error, 2000));
     }
 
     modalClosedHandler =()=>{
@@ -116,6 +126,9 @@ class ConnectedOrderList extends Component {
                                     </span> : null}
                                   <p className={classes.ViewDetails} onClick={()=>this.viewOrderDetailsHandler( orderId, rowData)}> View Details
                                       <BsBoxArrowUpRight className={classes.ViewDetailsIcon}/></p>
+                                  {rowData.balanceDue !== 0 ?   <span>
+                                     <RiDeleteBin6Line onClick={()=>this.deleteOrderHandler( orderId)}></RiDeleteBin6Line>
+                                    </span> : null}
                               </div>
                           );
                   },
