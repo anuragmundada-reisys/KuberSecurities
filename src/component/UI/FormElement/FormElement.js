@@ -2,6 +2,8 @@ import React from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import classes from './FormElement.module.css';
+import {GoInfo} from "react-icons/go"
+import ReactTooltip from "react-tooltip";
 
 const FormElement = (props) => {
     let inputElement = null;
@@ -43,7 +45,20 @@ const FormElement = (props) => {
     }
     return(
         <div className={classes.Input}>
-            <label className={classes.Label} >{props.label}</label>
+            {props.label === 'Free Quantity' ?
+                        <label className={classes.Label} >
+                            <span className={classes.ToolTipLabel}>{props.label }
+                                <GoInfo className={classes.InfoIcon} data-tip data-for="freeQuantityTip"/>
+                           </span>
+                            <ReactTooltip id="freeQuantityTip" place="top" effect="solid"
+                                          multiline={true} backgroundColor={"lightgrey"}
+                                          textColor={"black"}>
+                                Free cases or water bottles sold under scheme.<br/>
+                                Enter Free Quantity as count of bottles.
+                            </ReactTooltip>
+                        </label>
+                 :  <label className={classes.Label} >{props.label }</label>}
+
             {inputElement}
         </div>
     )

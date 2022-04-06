@@ -12,6 +12,15 @@
     color: #5e1d8a;
 }
 
+.ToolTipLabel{
+    font-weight: 600;
+    display: inline-flex;
+    color: #5e1d8a;
+}
+
+.InfoIcon {
+    margin: 5px 0 0 3px;
+}
 
 .InputElement {
     border: 1px solid #5a4c63;

@@ -71,8 +71,8 @@ class ConnectedHome extends Component{
         let availableStockOptions = cloneDeep(OPTIONS);
         availableStockData.datasets[0].data = [];
         this.props.availableStock.map(stock => {
-            availableStockData.labels.push(`${stock.title}: ${stock.availableStock}`)
-            availableStockData.datasets[0].data.push(stock.availableStock)
+            availableStockData.labels.push(`${stock.title} - ${stock.availableCases} (${stock.availableBottles})`)
+            availableStockData.datasets[0].data.push(stock.availableCases)
         })
         availableStockOptions.plugins.title.text = 'Available Stock';
 

@@ -64,6 +64,16 @@ class ConnectedOrder extends Component {
                 value: '',
                 label: 'Quantity'
             },
+            freeQuantity: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'number',
+                    min: 0,
+                    placeHolder: 'Enter Free Quantity'
+                },
+                value: '',
+                label: 'Free Quantity'
+            },
             rate: {
                 elementType: 'input',
                 elementConfig: {
@@ -238,7 +248,6 @@ class ConnectedOrder extends Component {
               }
           }
         })
-
         valid &&
         this.props.addOrder(formData).then(()=>{
             ToastsStore.success(ORDER_ADDED_SUCCESSFULLY, 1000);
@@ -492,7 +501,7 @@ class ConnectedOrder extends Component {
         const formElementArray = [];
 
         //to display add more order element
-        const orderElement = ['productId', 'quantity', 'rate', 'amount' ];
+        const orderElement = ['productId', 'quantity', 'freeQuantity', 'rate', 'amount' ];
         const orderElementArray = [];
 
         //only to display order date at end of form
