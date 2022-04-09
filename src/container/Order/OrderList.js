@@ -28,6 +28,7 @@ class ConnectedOrderList extends Component {
       rowData: {},
       viewOrderDetails: false,
       receivedPayment: false,
+      isDelete: false,
       dataFound: true,
       orders:[]
     }
@@ -49,17 +50,23 @@ class ConnectedOrderList extends Component {
         this.setState({viewOrderDetails: true, rowData: rowData})
     }
 
-    deleteOrderHandler = (orderId) => {
+    deleteOrderHandler = (rowData) => {
+        this.setState({isDelete: true, rowData: rowData})
+    }
+
+    deleteOrder = (orderId) => {
         this.props.deleteOrder(orderId)
             .then(()=>{
-                ToastsStore.success("Order Deleted successfully", 3000)
-                window.location.reload()})
-            .catch(error=> ToastsStore.error(error, 2000));
+                ToastsStore.success("Order Deleted successfully", 3000);
+                setTimeout(() => {
+                    window.location.reload()
+                }, 500);})
+            .catch(error=> ToastsStore.error(error, 2500));
     }
 
     modalClosedHandler =()=>{
       this.setState({
-          isEditing: false, viewOrderDetails: false, receivedPayment: false
+          isEditing: false, viewOrderDetails: false, receivedPayment: false, isDelete: false
       })
     }
 
@@ -104,7 +111,11 @@ class ConnectedOrderList extends Component {
               </Modal> : this.state.viewOrderDetails ?
                      <Modal show={this.state.viewOrderDetails} modalClosed={this.modalClosedHandler}>
                         <OrderDetails rowData={this.state.rowData}/>
-                     </Modal> :null}
+                     </Modal> : this.state.isDelete ? <Modal show={this.state.isDelete} modalClosed={this.modalClosedHandler}>
+                         <h1 className="font-bold">Delete order {this.state.rowData.billNo} ?</h1>
+                         <Button btnType='Danger' clicked={()=>this.deleteOrder(this.state.rowData.orderId)}> Delete </Button>
+                         <Button btnType='Success' clicked={this.modalClosedHandler}> Cancel </Button>
+                     </Modal> : null}
               <>
               <div className={classes.AddOrder}>
                <span className={classes.Text}>Did you get any new Order?</span>
@@ -124,10 +135,10 @@ class ConnectedOrderList extends Component {
                                   {rowData.balanceDue !== 0 ?   <span>
                                      <FiEdit onClick={()=>this.editOrderHandler( orderId,  rowData)}/>
                                     </span> : null}
-                                  <p className={classes.ViewDetails} onClick={()=>this.viewOrderDetailsHandler( orderId, rowData)}> View Details
+                                  <p className={classes.ViewDetails} onClick={()=>this.viewOrderDetailsHandler(orderId, rowData)}> View Details
                                       <BsBoxArrowUpRight className={classes.ViewDetailsIcon}/></p>
                                   {rowData.balanceDue !== 0 ?   <span>
-                                     <RiDeleteBin6Line onClick={()=>this.deleteOrderHandler( orderId)}></RiDeleteBin6Line>
+                                     <RiDeleteBin6Line onClick={()=>this.deleteOrderHandler(rowData)}></RiDeleteBin6Line>
                                     </span> : null}
                               </div>
                           );
