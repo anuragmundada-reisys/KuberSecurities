@@ -19,7 +19,7 @@ import {
     RECEIVED_AMOUNT_ADDED_SUCCESSFULLY,
     RECEIVED_AMOUNT_GREATER_THAN_BALANCE_DUE, UPDATE_ORDER_DETAILS
 } from "../../common/Utils";
-
+import { formatInTimeZone } from 'date-fns-tz'
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -219,8 +219,12 @@ class ConnectedOrder extends Component {
         const orderFormKeys = ['billNo', 'orderDate']
         const formData = { }
         for(let key in this.state.orderForm){
-            if(orderFormKeys.includes(key)){
-                formData[key] = this.state.orderForm[key].value
+            if(orderFormKeys.includes(key)) {
+                if (key === 'orderDate') {
+                    formData[key] = formatInTimeZone(this.state.orderForm[key].value, 'IST', 'yyy-MM-dd')
+                } else {
+                    formData[key] = this.state.orderForm[key].value
+                }
             }
         }
         formData['orders'] = this.state.orderDetails;
