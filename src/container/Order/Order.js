@@ -252,17 +252,38 @@ class ConnectedOrder extends Component {
           }
         })
 
-        // Add Received payment here since it is not a required field
+        // Add Received payment here since both fields are not required field
         formData['paymentMode'] = this.state.orderForm.paymentMode.value;
         formData['receivedAmount'] = this.state.orderForm.receivedAmount.value;
 
-        valid &&
-        this.props.addOrder(formData).then(()=>{
-            ToastsStore.success(ORDER_ADDED_SUCCESSFULLY, 1000);
-            setTimeout(() => {
-                this.props.navigate('/order', {replace:true});
+        //but if one of field in received payment is entered then other becomes required
+        if(isValidInput(this.state.orderForm.paymentMode.value)){
+            valid  = isValidInput(this.state.orderForm.receivedAmount.value)
+            if(!valid){
+                this.setState({orderError: true})
+                return;
+            }
+        }else if(isValidInput(this.state.orderForm.receivedAmount.value)){
+            valid  = isValidInput(this.state.orderForm.paymentMode.value)
+            if(!valid){
+                this.setState({orderError: true})
+                return;
+            }
+        }
+
+        //validate if received payment is greater than total amount
+        if(this.state.orderForm.receivedAmount.value > this.state.totalAmount){
+            ToastsStore.error(RECEIVED_AMOUNT_GREATER_THAN_BALANCE_DUE, 2000)
+            event.preventDefault();
+        }else{
+            valid &&
+            this.props.addOrder(formData).then(()=>{
+                ToastsStore.success(ORDER_ADDED_SUCCESSFULLY, 1000);
+                setTimeout(() => {
+                    this.props.navigate('/order', {replace:true});
                 }, 500)
-         }).catch(error=> ToastsStore.error(error, 2000));
+            }).catch(error=> ToastsStore.error(error, 2000));
+        }
     }
 
     updateOrderHandler = (event) => {
