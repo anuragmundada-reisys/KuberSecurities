@@ -14,6 +14,7 @@ import {
 } from "../../common/Utils";
 import {GoDiffAdded} from "react-icons/go";
 import {CgCloseO} from "react-icons/cg";
+import {formatInTimeZone} from "date-fns-tz";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -87,7 +88,7 @@ class ConnectedInventory extends Component {
 
         let valid = true;
          const formData = {
-             productReceivedDate: this.state.productReceivedDate,
+             productReceivedDate: formatInTimeZone(this.state.productReceivedDate, 'IST', 'yyyy-MM-dd'),
              products: this.state.productDetails
          };
 
