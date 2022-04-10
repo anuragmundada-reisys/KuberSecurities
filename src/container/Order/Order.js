@@ -116,7 +116,6 @@ class ConnectedOrder extends Component {
                 value: '',
                 label: 'Payment Mode',
             },
-
             receivedPaymentDate: {
                 elementType: 'datePicker',
                 elementConfig: {
@@ -221,7 +220,7 @@ class ConnectedOrder extends Component {
         for(let key in this.state.orderForm){
             if(orderFormKeys.includes(key)) {
                 if (key === 'orderDate') {
-                    formData[key] = formatInTimeZone(this.state.orderForm[key].value, 'IST', 'yyy-MM-dd')
+                    formData[key] = formatInTimeZone(this.state.orderForm[key].value, 'IST', 'yyyy-MM-dd')
                 } else {
                     formData[key] = this.state.orderForm[key].value
                 }
@@ -252,6 +251,11 @@ class ConnectedOrder extends Component {
               }
           }
         })
+
+        // Add Received payment here since it is not a required field
+        formData['paymentMode'] = this.state.orderForm.paymentMode.value;
+        formData['receivedAmount'] = this.state.orderForm.receivedAmount.value;
+
         valid &&
         this.props.addOrder(formData).then(()=>{
             ToastsStore.success(ORDER_ADDED_SUCCESSFULLY, 1000);
@@ -298,7 +302,7 @@ class ConnectedOrder extends Component {
                     suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
             );
             this.setState({customerName: userInput, filteredSuggestions: filtered, showSuggestion: true, orderError: false})
-        }else{
+        } else {
             const updatedOrderForm = {...this.state.orderForm}
             const updatedElement = { ...updatedOrderForm[keyIdentifier]}
             if(keyIdentifier === 'orderDate'){
@@ -515,7 +519,7 @@ class ConnectedOrder extends Component {
         const receivedPaymentElement = ['receivedAmount', 'paymentMode', 'receivedPaymentDate' ];
         const receivedPaymentElementArray = []
 
-        for(let key in this.state.orderForm){
+        for(let key in this.state.orderForm) {
             //render order date on add order form only
            if(!this.props.isEditing && !this.props.receivedPayment && !this.props.isAssigning && elements.includes(key)) {
                 formElementArray.push({
@@ -596,11 +600,30 @@ class ConnectedOrder extends Component {
                        }
                        {/* Displaying order date on add Order Form only -- look for formElement array in render*/}
                        {  formElementArray.map(formElement => (
+                           <>
                         <Input elementType={formElement.config.elementType}
                                elementConfig={formElement.config.elementConfig}
                                value={formElement.config.value}
                                label={formElement.config.label}
                                changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
+                               <table>
+                                   <tr>
+                                       <th> <Input elementType={this.state.orderForm['paymentMode'].elementType}
+                                                   elementConfig={this.state.orderForm['paymentMode'].elementConfig}
+                                                   value={this.state.orderForm['paymentMode'].value}
+                                                   label={this.state.orderForm['paymentMode'].label}
+                                                   changed={(event)=>this.inputChangeHandler( event, 'paymentMode' )}
+                                       /></th>
+                                       <th> <Input elementType={this.state.orderForm['receivedAmount'].elementType}
+                                                   elementConfig={this.state.orderForm['receivedAmount'].elementConfig}
+                                                   value={this.state.orderForm['receivedAmount'].value}
+                                                   label={this.state.orderForm['receivedAmount'].label}
+                                                   changed={(event)=>this.inputChangeHandler( event, 'receivedAmount' )}
+                                       /></th>
+                                   </tr>
+                               </table>
+
+                           </>
                        ) )}
 
                       { /* Received payment render */}
