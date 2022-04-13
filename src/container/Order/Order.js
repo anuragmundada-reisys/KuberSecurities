@@ -444,11 +444,15 @@ class ConnectedOrder extends Component {
             orderId: this.props.rowData && this.props.rowData.orderId,
             receivedPayments: [...this.state.receivedPaymentDetails],
         };
-        receivedPaymentFormData.receivedPayments.forEach(receivedPayment => {
+        receivedPaymentFormData.receivedPayments.map(receivedPayment => {
             for (let key in receivedPayment) {
                 valid = isValidInput(receivedPayment[key])
                 if(!valid){
                     return;
+                } else {
+                    if (key === 'receivedPaymentDate') {
+                        receivedPayment[key] = formatInTimeZone(receivedPayment[key], 'IST', 'yyyy-MM-dd')
+                    }
                 }
             }
         });
