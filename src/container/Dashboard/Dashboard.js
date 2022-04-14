@@ -9,6 +9,7 @@ import 'chartjs-plugin-datalabels';
 import DatePicker from "react-datepicker";
 import {ToastsContainer, ToastsStore} from "react-toasts";
 import {isValidInput, SELECT_DATE_DASHBOARD} from "../../common/Utils";
+import {formatInTimeZone} from "date-fns-tz";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -37,7 +38,8 @@ class ConnectedHome extends Component{
         if(!valid){
             ToastsStore.error(SELECT_DATE_DASHBOARD, 2000)
         }else{
-            this.props.getMetrics(this.state.date)
+            let modifiedTimeZoneDate =  formatInTimeZone(this.state.date, 'IST', 'yyyy-MM-dd')
+            this.props.getMetrics(modifiedTimeZoneDate)
                 .catch(error=> ToastsStore.error(error, 2000));
         }
     }
