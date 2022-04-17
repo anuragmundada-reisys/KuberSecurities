@@ -19,4 +19,4 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAIL = "LOGIN_FAIL";
 export const LOGOUT = "LOGOUT";
 export const RESET_PASSWORD = "SET_MESSAGE";
-export const CLEAR_MESSAGE = "CLEAR_MESSAGE";
+export const GET_TOTAL_BALANCE_DUE = "GET_TOTAL_BALANCE_DUE";

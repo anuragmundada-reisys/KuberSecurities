@@ -1,4 +1,4 @@
-import {GET_AVAILABLE_STOCK, GET_COUNT, GET_PAYMENT_METRICS} from '../constant/ActionType';
+import {GET_AVAILABLE_STOCK, GET_COUNT, GET_PAYMENT_METRICS, GET_TOTAL_BALANCE_DUE} from '../constant/ActionType';
 import axios from '../../axios';
 import {INTERNAL_ERROR_MESSAGE} from "../../common/Utils";
 
@@ -35,6 +35,21 @@ export function getAvailableStock(){
     return function(dispatch) {
         return axios.get('/kuberbeverages/metrics/v1/availablestock').then(response=>{
             dispatch({ type: GET_AVAILABLE_STOCK, payload: response.data });
+        }).catch(error=>{
+            if(error.response){
+                throw error.response.data;
+            }else{
+                throw INTERNAL_ERROR_MESSAGE
+            }
+        })
+
+    };
+}
+
+export function getTotalBalanceDue(){
+    return function(dispatch) {
+        return axios.get('/kuberbeverages/metrics/v1/totalbalancedue').then(response=>{
+            dispatch({ type: GET_TOTAL_BALANCE_DUE, payload: response.data });
         }).catch(error=>{
             if(error.response){
                 throw error.response.data;

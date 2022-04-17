@@ -2,7 +2,7 @@ import React, { Component} from 'react';
 import classes from './Dashboard.module.css';
 import Pie from '../../component/UI/PieChart/PieChart';
 import { DATA, OPTIONS} from '../../component/UI/PieChart/utils';
-import {getAvailableStock, getMetrics} from '../../redux/action/CountAction';
+import {getAvailableStock, getMetrics, getTotalBalanceDue} from '../../redux/action/CountAction';
 import { connect} from 'react-redux';
 import {cloneDeep} from "lodash";
 import 'chartjs-plugin-datalabels';
@@ -14,7 +14,8 @@ import {formatInTimeZone} from "date-fns-tz";
 function mapDispatchToProps(dispatch) {
   return {
     getMetrics: (receivedDate)=> dispatch(getMetrics(receivedDate)),
-    getAvailableStock: ()=> dispatch(getAvailableStock())
+    getAvailableStock: ()=> dispatch(getAvailableStock()),
+     getTotalBalanceDue: ()=>dispatch(getTotalBalanceDue())
   };
 }
 
@@ -25,6 +26,8 @@ class ConnectedHome extends Component{
 
     componentDidMount() {
         this.props.getAvailableStock()
+            .catch(error=> ToastsStore.error(error, 2000));
+        this.props.getTotalBalanceDue()
             .catch(error=> ToastsStore.error(error, 2000));
     }
 
@@ -69,6 +72,15 @@ class ConnectedHome extends Component{
         ordersOptions.plugins.title.text = `Orders`;
 
 
+        let totalBalanceDueData = cloneDeep(DATA);
+        let totalBalanceDueOptions = cloneDeep(OPTIONS);
+        totalBalanceDueData.datasets[0].data = [];
+        this.props.totalBalanceDue.map(balanceDue => {
+            totalBalanceDueData.labels.push(`Due : ${balanceDue.totalBalanceDue}`)
+            totalBalanceDueData.datasets[0].data.push(balanceDue.totalBalanceDue)
+        })
+        totalBalanceDueOptions.plugins.title.text = 'Total Balance Due';
+
         let availableStockData = cloneDeep(DATA);
         let availableStockOptions = cloneDeep(OPTIONS);
         availableStockData.datasets[0].data = [];
@@ -98,6 +110,11 @@ class ConnectedHome extends Component{
                 </div>
             </div>
             <div className={classes.Wrapper}>
+                <div className={classes.PieChart}>
+                    <Pie data={totalBalanceDueData} options={totalBalanceDueOptions}/>
+                </div>
+            </div>
+            <div className={classes.Wrapper}>
               <div className={classes.PieChart}>
                 <Pie data={availableStockData} options={availableStockOptions}/>
               </div>
@@ -110,8 +127,8 @@ class ConnectedHome extends Component{
 function mapStateToProps(state) {
   return {
     count: state.localSales.count,
-    availableStock: state.localSales.availableStock
-
+    availableStock: state.localSales.availableStock,
+    totalBalanceDue: state.localSales.totalBalanceDue
   };
 }
 
