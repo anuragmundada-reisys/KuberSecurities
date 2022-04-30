@@ -13,7 +13,8 @@ function mapDispatchToProps(dispatch) {
 
 class ConnectedOrderDetails extends Component {
     state = {
-        orders : []
+        orders : [],
+        notes: ''
     }
    async componentDidMount(){
         await this.props.getReceivedPayment(this.props.rowData.orderId)
@@ -23,12 +24,14 @@ class ConnectedOrderDetails extends Component {
             .catch(error=> ToastsStore.error(error, 2000));
        if(!this.props.viewPaymentAndAssigneeDetails){
            let updatedOrderDetails = [];
+           let notes = '';
            this.props.orderList.map(order=>{
                if(order.orderId === this.props.rowData.orderId){
+                   notes = order.notes;
                    updatedOrderDetails = order.orders
                }
            })
-           this.setState({orders: updatedOrderDetails})
+           this.setState({orders: updatedOrderDetails, notes: notes})
        }
     }
 
@@ -110,6 +113,8 @@ class ConnectedOrderDetails extends Component {
                         {assigneeHistory}
                     </table> : <p style={{fontWeight:600}}>Pending Assignment!</p>
                 }
+                <h3 style={{color:'#5e1d8a', marginTop:'10px'}}><strong> Notes:</strong></h3>
+                <span> {this.state.notes} </span>
             </>
         )
     }

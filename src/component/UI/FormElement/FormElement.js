@@ -26,6 +26,13 @@ const FormElement = (props) => {
             value={props.value}
             onChange={props.changed}/>
             break;
+        case 'textarea':
+            inputElement = <textarea
+            className={classes.InputElement}
+            {...props.elementConfig}
+            value={props.value}
+            onChange={props.changed}/>
+            break;
         case 'select':
             inputElement = <select required className={classes.InputElement}
                                    value={props.value}

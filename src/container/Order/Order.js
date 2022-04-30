@@ -134,6 +134,15 @@ class ConnectedOrder extends Component {
                 value: '',
                 label: 'Order Date'
             },
+            notes: {
+                elementType: 'textarea',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Enter Description',
+                },
+                value: '',
+                label: 'Notes'
+            }
         },
         moreOrder: false,
         orderDetails: [],
@@ -253,6 +262,7 @@ class ConnectedOrder extends Component {
         })
 
         // Add Received payment here since both fields are not required field
+        formData['notes'] = this.state.orderForm.notes.value;
         formData['paymentMode'] = this.state.orderForm.paymentMode.value;
         formData['receivedAmount'] = this.state.orderForm.receivedAmount.value;
 
@@ -631,22 +641,27 @@ class ConnectedOrder extends Component {
                                value={formElement.config.value}
                                label={formElement.config.label}
                                changed={(event)=>this.inputChangeHandler(event,formElement.id )}/>
-                               <table>
-                                   <tr>
-                                       <th> <Input elementType={this.state.orderForm['paymentMode'].elementType}
-                                                   elementConfig={this.state.orderForm['paymentMode'].elementConfig}
-                                                   value={this.state.orderForm['paymentMode'].value}
-                                                   label={this.state.orderForm['paymentMode'].label}
-                                                   changed={(event)=>this.inputChangeHandler( event, 'paymentMode' )}
-                                       /></th>
-                                       <th> <Input elementType={this.state.orderForm['receivedAmount'].elementType}
-                                                   elementConfig={this.state.orderForm['receivedAmount'].elementConfig}
-                                                   value={this.state.orderForm['receivedAmount'].value}
-                                                   label={this.state.orderForm['receivedAmount'].label}
-                                                   changed={(event)=>this.inputChangeHandler( event, 'receivedAmount' )}
-                                       /></th>
-                                   </tr>
-                               </table>
+                       <Input elementType={this.state.orderForm['notes'].elementType}
+                              elementConfig={this.state.orderForm['notes'].elementConfig}
+                              value={this.state.orderForm['notes'].value}
+                              label={this.state.orderForm['notes'].label}
+                              changed={(event)=>this.inputChangeHandler( event, 'notes' )}/>
+                       <table>
+                           <tr>
+                               <th> <Input elementType={this.state.orderForm['paymentMode'].elementType}
+                                           elementConfig={this.state.orderForm['paymentMode'].elementConfig}
+                                           value={this.state.orderForm['paymentMode'].value}
+                                           label={this.state.orderForm['paymentMode'].label}
+                                           changed={(event)=>this.inputChangeHandler( event, 'paymentMode' )}
+                               /></th>
+                               <th> <Input elementType={this.state.orderForm['receivedAmount'].elementType}
+                                           elementConfig={this.state.orderForm['receivedAmount'].elementConfig}
+                                           value={this.state.orderForm['receivedAmount'].value}
+                                           label={this.state.orderForm['receivedAmount'].label}
+                                           changed={(event)=>this.inputChangeHandler( event, 'receivedAmount' )}
+                               /></th>
+                           </tr>
+                       </table>
 
                            </>
                        ) )}
