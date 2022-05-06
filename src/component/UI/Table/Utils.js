@@ -95,3 +95,31 @@ export const INVENTORY_LIST_COLUMNS =  [
      accessor: "productionDate",
    },
 ]
+
+export const RECEIVED_PAYMENTS_COLUMNS =  [
+    {
+        Header: "Bill Number",
+        accessor: "billNo"
+    },
+    {
+        Header: "Customer Name",
+        accessor: "customerName",
+    },
+    {
+        Header: "Received Amount",
+        accessor: "receivedAmount",
+    },
+    {
+        Header: "Payment Mode",
+        accessor: "paymentMode",
+    },
+    {
+        Header: "Receiver Name",
+        accessor: "receiverName",
+    },
+    {
+        Header: "Received Date",
+        accessor: "receivedPaymentDate",
+    },
+
+]

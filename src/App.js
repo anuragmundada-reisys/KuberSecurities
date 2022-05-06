@@ -13,6 +13,7 @@ import Login from "./container/Authentication/Login";
 import Logout from "./container/Authentication/Logout";
 import RequireAuth from "./container/Authentication/RequireAuth";
 import ResetPassword from "./container/Authentication/ResetPassword";
+import ReceivedPayment from "./container/ReceivedPayment/ReceivedPayment";
 
 function App(props) {
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ function App(props) {
                </RequireAuth>
               }
             />
+
             <Route path='/collection' exact element={
                 <RequireAuth>
                   <Collection navigate={navigate}/>
@@ -68,6 +70,12 @@ function App(props) {
                      <ResetPassword navigate={navigate}/>
                  </RequireAuth>
            } />
+             <Route path='/received-payment' exact element={
+                 <RequireAuth>
+                     <ReceivedPayment navigate={navigate}/>
+                 </RequireAuth>
+             }
+             />
          </Routes>
       </Layout>
     </div>

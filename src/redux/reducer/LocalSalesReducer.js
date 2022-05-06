@@ -11,7 +11,7 @@ import {
     GET_PAYMENT_METRICS, GET_AVAILABLE_STOCK,
     GET_ORDER_ASSIGNEE_HISTORY,
     GET_BILL_NUMBERS,
-    GET_TOTAL_BALANCE_DUE
+    GET_TOTAL_BALANCE_DUE, GET_ALL_ORDERS_RECEIVED_PAYMENT
 } from '../constant/ActionType';
 
 const initialState = {
@@ -36,7 +36,8 @@ const initialState = {
     availableStock: [],
     assigneeHistory: [],
     billNumbers:[],
-    totalBalanceDue:[]
+    totalBalanceDue:[],
+    totalReceivedPayments: []
   };
   
   function localSalesReducer(state = initialState, action) {
@@ -104,6 +105,10 @@ const initialState = {
          case GET_TOTAL_BALANCE_DUE:
              return {
                  ...state, totalBalanceDue: action.payload
+             }
+         case GET_ALL_ORDERS_RECEIVED_PAYMENT:
+             return {
+                 ...state, totalReceivedPayments: action.payload
              }
           default:
               return state;
