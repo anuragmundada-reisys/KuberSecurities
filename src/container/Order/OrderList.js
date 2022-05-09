@@ -132,9 +132,9 @@ class ConnectedOrderList extends Component {
                     const orderId = rowData.orderId;
                           return (
                               <div className={classes.ActionItems}>
-                                  {rowData.balanceDue !== 0 ?   <span>
+                                    <span>
                                      <FiEdit onClick={()=>this.editOrderHandler( orderId,  rowData)}/>
-                                    </span> : null}
+                                    </span>
                                   <p className={classes.ViewDetails} onClick={()=>this.viewOrderDetailsHandler(orderId, rowData)}> View Details
                                       <BsBoxArrowUpRight className={classes.ViewDetailsIcon}/></p>
                                   {rowData.balanceDue !== 0 ?   <span>

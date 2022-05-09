@@ -6,6 +6,7 @@ import {getBillNumbers, getCustomerNames, getReceiverNames} from "../../redux/ac
 import {connect} from "react-redux";
 import Button from "../../component/UI/Button/Button";
 import DatePicker from "react-datepicker";
+import {formatInTimeZone} from "date-fns-tz";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -142,7 +143,7 @@ class ConnectedReceivedPaymentFilter extends  Component {
                 <div className={classes.ButtonWrapper}>
                     <Button btnType='Success' clicked={()=>this.props.clicked({billNo: this.state.billNo,
                         customerName: this.state.customerName,
-                        receivedPaymentDate: this.state.receivedPaymentDate && this.state.receivedPaymentDate.toISOString().slice(0, 10),
+                        receivedPaymentDate: this.state.receivedPaymentDate && formatInTimeZone(this.state.receivedPaymentDate, 'IST', 'yyyy-MM-dd'),
                         assigneeName: this.state.assigneeName,
                     })}>
                         SEARCH </Button>

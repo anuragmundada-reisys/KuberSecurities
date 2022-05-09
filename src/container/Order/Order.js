@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Button from '../../component/UI/Button/Button';
 import Input from '../../component/UI/FormElement/FormElement';
 import classes from './Order.module.css';
-import { addOrder, updateOrder, addReceivedPayment } from '../../redux/action/OrderAction';
+import {addOrder, updateOrder, addReceivedPayment, getReceivedPayment} from '../../redux/action/OrderAction';
 import {getCustomerNames, getMasterData, getReceiverNames} from '../../redux/action/MasterDataAction';
 import { connect } from 'react-redux';
 import { GoDiffAdded } from 'react-icons/go';
@@ -28,6 +28,7 @@ function mapDispatchToProps(dispatch) {
         getMasterData: ()=> dispatch(getMasterData()),
         getCustomerNames: ()=> dispatch(getCustomerNames()),
         addReceivedPayment: receivedPayment => dispatch(addReceivedPayment(receivedPayment)),
+        getReceivedPayment: orderId => dispatch(getReceivedPayment(orderId)),
         getReceiverNames: ()=> dispatch(getReceiverNames()),
     };
 }
@@ -180,6 +181,13 @@ class ConnectedOrder extends Component {
            })
            .catch(error=> ToastsStore.error(error, 2000));
 
+      if(this.props.isEditing && this.props.rowData.orderId){
+          await this.props.getReceivedPayment(this.props.rowData.orderId);
+          this.props.receivedPayments.map(ele => {
+              this.state.receivedPaymentDetails.push({...ele, orderPaymentId: ele.paymentId})
+          })
+      }
+
        let updatedOrderForm = {...this.state.orderForm}
 
        let updatedProductTypeElement = { ...updatedOrderForm.productId}
@@ -197,11 +205,20 @@ class ConnectedOrder extends Component {
         let updatedOrders = [...this.state.orderDetails];
         let updatedTotalAmount = this.state.totalAmount;
         let updatedBalanceDue = this.state.balanceDue;
-
+        let updatedCustomerName = this.state.customerName;
         //If editing order, assign initial state of order details and total amount to row data
         if(this.props.isEditing){
+            let updatedBillNoElement = { ...updatedOrderForm.billNo}
+            updatedBillNoElement.value = this.props.rowData.billNo;
+            updatedOrderForm.billNo = updatedBillNoElement;
+
+            let updatedNotesElement = { ...updatedOrderForm.notes}
+            updatedNotesElement.value = this.props.rowData.notes;
+            updatedOrderForm.notes = updatedNotesElement;
+
             updatedOrders = [...this.props.rowData.orders];
             updatedTotalAmount = this.props.rowData.totalAmount;
+            updatedCustomerName = this.props.rowData.customerName;
         }
 
         //Received Payment or bill is getting assigned to someone, get balance due and receiver names suggestions
@@ -216,7 +233,7 @@ class ConnectedOrder extends Component {
        // updatedOrderForm.quantity = updatedQuantityElement;
 
         this.setState({orderForm: updatedOrderForm, orderDetails: updatedOrders,
-              totalAmount: updatedTotalAmount, suggestions: updatedSuggestions , balanceDue: updatedBalanceDue})
+              totalAmount: updatedTotalAmount, suggestions: updatedSuggestions , balanceDue: updatedBalanceDue, customerName: updatedCustomerName})
     }
 
     addOrderHandler =  (event) => {
@@ -299,11 +316,24 @@ class ConnectedOrder extends Component {
     updateOrderHandler = (event) => {
         let valid = true;
         event.preventDefault();
+        const orderFormKeys = ['billNo', 'notes']
+
         let editFormData = {
             orderId: this.props.rowData && this.props.rowData.orderId,
             orders: [...this.state.orderDetails],
             totalAmount: this.state.totalAmount,
+            customerName: this.state.customerName
         };
+
+        for(let key in this.state.orderForm){
+            if(orderFormKeys.includes(key)) {
+                if (key === 'orderDate') {
+                    editFormData[key] = formatInTimeZone(this.state.orderForm[key].value, 'IST', 'yyyy-MM-dd')
+                } else {
+                    editFormData[key] = this.state.orderForm[key].value
+                }
+            }
+        }
 
         //validating order
         editFormData.orders.length !== 0 && editFormData.orders.forEach(order => {
@@ -315,6 +345,7 @@ class ConnectedOrder extends Component {
                 }
             }
         })
+        editFormData['paymentHistory'] = this.state.receivedPaymentDetails;
         valid &&
         this.props.updateOrder(editFormData).then(()=>{
             ToastsStore.success(ORDER_UPDATED_SUCCESSFULLY, 1000);
@@ -552,11 +583,15 @@ class ConnectedOrder extends Component {
 
         //to display received payment
         const receivedPaymentElement = ['receivedAmount', 'paymentMode', 'receivedPaymentDate' ];
+        const editReceivedPaymentElement = ['receivedAmount', 'paymentMode'];
         const receivedPaymentElementArray = []
+        const editReceivedPaymentElementArray = []
+
+        let renderReceivedPayment = [];
 
         for(let key in this.state.orderForm) {
             //render order date on add order form only
-           if(!this.props.isEditing && !this.props.receivedPayment && !this.props.isAssigning && elements.includes(key)) {
+           if( !this.props.receivedPayment && !this.props.isAssigning && !this.props.isEditing && elements.includes(key)) {
                 formElementArray.push({
                     id: key,
                     config: this.state.orderForm[key]
@@ -571,14 +606,26 @@ class ConnectedOrder extends Component {
                 })
             }
 
-            //render received payment
-            if(this.state.receivedPayment && receivedPaymentElement.includes(key)){
+            //render received payment when editing as well on collection
+            if(this.state.receivedPayment  && receivedPaymentElement.includes(key)){
                 receivedPaymentElementArray.push({
                     id: key,
                     config: this.state.orderForm[key]
                 })
             }
+            if(this.props.isEditing && editReceivedPaymentElement.includes(key)){
+                editReceivedPaymentElementArray.push({
+                    id: key,
+                    config: this.state.orderForm[key]
+                })
+            }
 
+        }
+
+        if(this.props.isEditing){
+            renderReceivedPayment = [...editReceivedPaymentElementArray]
+        }else{
+            renderReceivedPayment = [...receivedPaymentElementArray]
         }
         return(
             <>
@@ -593,7 +640,7 @@ class ConnectedOrder extends Component {
                 <form>
                       { /*Add and Update Order Form render */}
                       {
-                         !this.props.receivedPayment && !this.props.isEditing && !this.props.isAssigning &&
+                         !this.props.receivedPayment && !this.props.isAssigning &&
                            <>
                              <Input elementType='input'
                                elementConfig={this.state.orderForm['billNo'].elementConfig}
@@ -611,10 +658,12 @@ class ConnectedOrder extends Component {
                                     onClick={(event)=>this.onClick(event)
                                     }
                                 />}
-                               <div className={classes.AddMoreOrderTitle}>
-                                   <p >Add Product Type and Quantity</p>
-                                   <GoDiffAdded className={classes.AddMoreOrderButton} onClick={this.moreOrderHandler}/>
-                               </div>
+
+                                   <div className={classes.AddMoreOrderTitle}>
+                                       {this.props.isEditing ? <p >Edit Order Details</p> : <p>Add Product Type and Quantity</p>}
+                                       {!this.props.isEditing && <GoDiffAdded className={classes.AddMoreOrderButton} onClick={this.moreOrderHandler}/>}
+                                   </div>
+
                              </>
                           }
                          {/* render this on add order form and edit order - look for orderElementArray in render*/}
@@ -646,7 +695,7 @@ class ConnectedOrder extends Component {
                               value={this.state.orderForm['notes'].value}
                               label={this.state.orderForm['notes'].label}
                               changed={(event)=>this.inputChangeHandler( event, 'notes' )}/>
-                       <table>
+                               {!this.props.isEditing && <table>
                            <tr>
                                <th> <Input elementType={this.state.orderForm['paymentMode'].elementType}
                                            elementConfig={this.state.orderForm['paymentMode'].elementConfig}
@@ -661,21 +710,21 @@ class ConnectedOrder extends Component {
                                            changed={(event)=>this.inputChangeHandler( event, 'receivedAmount' )}
                                /></th>
                            </tr>
-                       </table>
+                       </table>}
 
                            </>
                        ) )}
 
                       { /* Received payment render */}
-                      {  this.props.receivedPayment &&
+                      {  (this.props.receivedPayment || this.props.isEditing ) &&
                         <>
                         <div className={classes.ReceivedPaymentTitle}>
-                            <p> Received Payment?</p>
-                            <GoDiffAdded className={classes.AddMoreOrderButton} onClick={this.receivedPaymentHandler}/>
+                            {this.props.isEditing ? <p>Edit Received Payment</p> : <p> Received Payment?</p>}
+                            {!this.props.isEditing && <GoDiffAdded className={classes.AddMoreOrderButton} onClick={this.receivedPaymentHandler}/>}
                         </div>
-                        {this.state.receivedPaymentDetails.map((receivedPayment)=>(
+                        {  this.state.receivedPaymentDetails.map((receivedPayment)=>(
                             <div className={classes.MorePaymentElement} key={receivedPayment.orderPaymentId}>
-                                {receivedPaymentElementArray.map(ele => (
+                                {renderReceivedPayment.map(ele => (
                                         <Input elementType={ele.config.elementType}
                                                elementConfig={ele.config.elementConfig}
                                                value={receivedPayment[ele.id]}
@@ -695,7 +744,7 @@ class ConnectedOrder extends Component {
 
                                     />}
                                 </div>
-                                <CgCloseO onClick={()=>this.removeReceivedPaymentHandler(receivedPayment.orderPaymentId)} className={classes.CloseIcon}/>
+                                { !this.props.isEditing && <CgCloseO onClick={()=>this.removeReceivedPaymentHandler(receivedPayment.orderPaymentId)} className={classes.CloseIcon}/>}
                             </div>
                             ))}
                         {this.state.receivedPaymentError && <span className={classes.ErrorMessage}> {ALL_FIELDS_ARE_REQUIRED} </span>}
@@ -742,6 +791,7 @@ function mapStateToProps(state) {
       masterData: state.localSales.masterData,
       customerNames: state.localSales.customerNames,
       receiverNames: state.localSales.receiverNames,
+      receivedPayments: state.localSales.receivedPayments
     };
   }
 
