@@ -19,6 +19,9 @@ export const PLEASE_ADD_RECEIVED_PRODUCTS = 'Please add received Products';
 export const SUPER_ADMIN_ROLE = 'Super_Admin';
 export const NEW_CONFIRM_PASSWORD = 'Confirm password does not match New password';
 export const STRONG_PASSWORD = 'Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters';
+export const PLEASE_ADD_EXPENSES = 'Please add Expenses'
+export const ADDED_EXPENSES = 'Expenses Added successfully';
+
 
 export const isValidInput = (value) => {
     if(value === '' || value === null || value === undefined || Number.isNaN(value)){

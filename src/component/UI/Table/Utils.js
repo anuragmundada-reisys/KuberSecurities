@@ -123,3 +123,18 @@ export const RECEIVED_PAYMENTS_COLUMNS =  [
     },
 
 ]
+
+export const EXPENSE_LIST_COLUMNS =  [
+    {
+        Header: "Expense Type",
+        accessor: "expenseType",
+    },
+    {
+        Header: "Amount",
+        accessor: "amount",
+    },
+    {
+        Header: "Expense Date",
+        accessor: "expenseDate",
+    },
+]

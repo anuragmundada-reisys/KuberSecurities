@@ -1,0 +1,48 @@
+.ExpenseFilter {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.DatePicker {
+    border: 1px solid #5a4c63;
+    background-color: white;
+    padding: 6px 10px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px #e7caca;
+}
+.DatePicker :focus {
+    border: 1px solid #5e1d8a;
+    background-color: #eee;
+}
+
+.Label {
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #5e1d8a;
+}
+
+.DateSearch {
+    margin: 5px 5px;
+    padding: 6px 10px;
+}
+
+.ButtonWrapper {
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 500px) {
+    .ExpenseFilter {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+}

@@ -12,7 +12,8 @@ const NavigationItems = (props) => (
         { props.isLoggedIn ? (
             <>
                     <NavigationItem link='/dashboard' exact={'true'}>DASHBOARD</NavigationItem>
-                    <NavigationItem link='/inventory' exact={'true'}>INVENTORY</NavigationItem>
+                    {/*<NavigationItem link='/inventory' exact={'true'}>INVENTORY</NavigationItem>*/}
+                    <NavigationItem link='/expense' exact={'true'}> EXPENSE </NavigationItem>
                     <NavigationItem link='/received-payment' exact={'true'}> PAYMENT</NavigationItem>
                     <NavigationItem link='/order' exact={'true'}>ORDERS</NavigationItem>
                     <NavigationItem link='/collection' exact={'true'}>COLLECTION</NavigationItem>

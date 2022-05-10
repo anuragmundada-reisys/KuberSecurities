@@ -1,0 +1,10 @@
+.AddExpense{
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+
+.Text {
+    margin: 20px 10px 0 30px;
+    font-weight: 400;
+}

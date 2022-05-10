@@ -2,7 +2,7 @@ import React, { Component} from 'react';
 import classes from './Dashboard.module.css';
 import Pie from '../../component/UI/PieChart/PieChart';
 import { DATA, OPTIONS} from '../../component/UI/PieChart/utils';
-import {getAvailableStock, getMetrics, getTotalBalanceDue} from '../../redux/action/CountAction';
+import {getAvailableStock, getExpenseByDate, getMetrics, getTotalBalanceDue} from '../../redux/action/CountAction';
 import { connect} from 'react-redux';
 import {cloneDeep} from "lodash";
 import 'chartjs-plugin-datalabels';
@@ -15,7 +15,8 @@ function mapDispatchToProps(dispatch) {
   return {
     getMetrics: (receivedDate)=> dispatch(getMetrics(receivedDate)),
     getAvailableStock: ()=> dispatch(getAvailableStock()),
-     getTotalBalanceDue: ()=>dispatch(getTotalBalanceDue())
+     getTotalBalanceDue: ()=>dispatch(getTotalBalanceDue()),
+      getExpenseByDate: (receivedDate)=> dispatch(getExpenseByDate(receivedDate))
   };
 }
 
@@ -36,14 +37,17 @@ class ConnectedHome extends Component{
         this.setState({date: date})
     }
 
-    getDataHandler =  () => {
+    getDataHandler =  async () => {
         let valid = isValidInput(this.state.date)
         if(!valid){
             ToastsStore.error(SELECT_DATE_DASHBOARD, 2000)
         }else{
             let modifiedTimeZoneDate =  formatInTimeZone(this.state.date, 'IST', 'yyyy-MM-dd')
-            this.props.getMetrics(modifiedTimeZoneDate)
+            await this.props.getMetrics(modifiedTimeZoneDate)
                 .catch(error=> ToastsStore.error(error, 2000));
+            await this.props.getExpenseByDate(modifiedTimeZoneDate)
+                .catch(error=> ToastsStore.error(error, 2000));
+
         }
     }
     render(){
@@ -90,19 +94,35 @@ class ConnectedHome extends Component{
         })
         availableStockOptions.plugins.title.text = 'Available Stock';
 
+        let totalExpenseByDateData = cloneDeep(DATA);
+        let totalExpenseByDateOptions = cloneDeep(OPTIONS);
+        totalExpenseByDateData.datasets[0].data = [];
+        this.props.expenseByDate.map(expense => {
+            totalExpenseByDateData.labels.push(`Expense : ${expense.totalExpenseByDate}`)
+            totalExpenseByDateData.datasets[0].data.push(expense.totalExpenseByDate)
+        })
+        totalExpenseByDateOptions.plugins.title.text = 'Total Expense';
+
       return(
         <div className={classes.Dashboard}>
             <ToastsContainer position='top_center' store={ToastsStore}/>
             <div className={classes.Wrapper}>
-                <p className={classes.Title}>Payment and Order Metrics</p>
-                <div className={classes.PaymentPieChart}>
-                    { this.props.count.payment.length > 0 ? <Pie data={paymentMetricsData} options={paymentMetricsOptions}/>:
-                        <p className={classes.NoDataFound}>No data to display!</p>}
+                <p className={classes.Title}>Payment, Order and Expense Metrics</p>
+                <div className={classes.DateMetrics}>
+                    <div className={classes.PaymentPieChart}>
+                        { this.props.count.payment.length > 0 ? <Pie data={paymentMetricsData} options={paymentMetricsOptions}/>:
+                            <p className={classes.NoDataFound}>No data to display!</p>}
+                    </div>
+                    <div className={classes.OrderPieChart}>
+                        { this.props.count.orders.length > 0 ? <Pie data={ordersData} options={ordersOptions}/>:
+                            <p className={classes.NoDataFound}>No data to display!</p>}
+                    </div>
+                    <div className={classes.ExpensePieChart}>
+                        { this.props.expenseByDate.length > 0 ? <Pie data={totalExpenseByDateData} options={totalExpenseByDateOptions}/>:
+                            <p className={classes.NoDataFound}>No data to display!</p>}
+                    </div>
                 </div>
-                <div className={classes.OrderPieChart}>
-                    { this.props.count.orders.length > 0 ? <Pie data={ordersData} options={ordersOptions}/>:
-                        <p className={classes.NoDataFound}>No data to display!</p>}
-                </div>
+
                 <div className={classes.GetDataButton}>
                     <DatePicker className={classes.DatePicker} selected={this.state.date} popperPlacement={'left-start'}
                                 onChange={(event)=>this.inputChangeHandler(event)} name={'StartDate'} placeholderText={'Select Date'}/>
@@ -128,7 +148,8 @@ function mapStateToProps(state) {
   return {
     count: state.localSales.count,
     availableStock: state.localSales.availableStock,
-    totalBalanceDue: state.localSales.totalBalanceDue
+    totalBalanceDue: state.localSales.totalBalanceDue,
+    expenseByDate: state.localSales.expenseByDate,
   };
 }
 
