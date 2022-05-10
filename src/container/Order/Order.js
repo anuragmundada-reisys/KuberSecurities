@@ -719,7 +719,7 @@ class ConnectedOrder extends Component {
                       {  (this.props.receivedPayment || this.props.isEditing ) &&
                         <>
                         <div className={classes.ReceivedPaymentTitle}>
-                            {this.props.isEditing ? <p>Edit Received Payment</p> : <p> Received Payment?</p>}
+                            {this.props.isEditing ? <p>Edit Received Payment</p> : renderReceivedPayment.length === 0 ? <p>Payment Not Received!</p> :<p> Received Payment?</p>}
                             {!this.props.isEditing && <GoDiffAdded className={classes.AddMoreOrderButton} onClick={this.receivedPaymentHandler}/>}
                         </div>
                         {  this.state.receivedPaymentDetails.map((receivedPayment)=>(
